@@ -2,7 +2,6 @@ package com.moneytransfer;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.moneytransfer.resources.RestAPI;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

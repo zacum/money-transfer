@@ -1,6 +1,5 @@
 package com.moneytransfer.services;
 
-import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Transaction;
 import com.moneytransfer.models.transaction.TransactionCreateRequest;
@@ -16,7 +15,7 @@ public class TransactionService {
 
         System.out.println(transaction.toString());
 
-        return new Gson().toJson("ok");
+        return "ok";
     }
 
 }

@@ -4,6 +4,8 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import org.javamoney.moneta.Money;
 
+import java.util.Optional;
+
 public class AccountRepository {
 
     public Account save(AccountCreateRequest accountCreateRequest) {
@@ -14,12 +16,12 @@ public class AccountRepository {
         return account;
     }
 
-    public Account get(Long accountId) {
+    public Optional<Account> get(Long accountId) {
         Account account = new Account();
         account.setId(accountId);
         account.setName("Victor");
         account.setMoney(Money.of(0, "EUR"));
-        return account;
+        return Optional.of(account);
     }
 
 }

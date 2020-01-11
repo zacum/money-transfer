@@ -2,7 +2,7 @@ package com.moneytransfer.models.account;
 
 import java.math.BigDecimal;
 
-public class AccountCreateResponse {
+public class AccountResponse {
 
     private Long id;
     private String name;
