@@ -11,10 +11,16 @@ Money Transfer Between Accounts
 
 * JUnit 4
 
-# How to run and test
+# Build
 
 ```maven
 mvn clean install
+```
+
+# Run
+
+```maven
+java -jar target/moneytransfer-0.1-jar-with-dependencies.jar
 ```
 
 # REST API
