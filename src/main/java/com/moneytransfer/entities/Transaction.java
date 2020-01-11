@@ -3,7 +3,7 @@ package com.moneytransfer.entities;
 import com.google.common.base.Objects;
 import org.javamoney.moneta.Money;
 
-public class TransactionEntity {
+public class Transaction {
 
     private Long id;
     private Long fromAccountId;
@@ -45,8 +45,8 @@ public class TransactionEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TransactionEntity)) return false;
-        TransactionEntity that = (TransactionEntity) o;
+        if (!(o instanceof Transaction)) return false;
+        Transaction that = (Transaction) o;
         return Objects.equal(id, that.id) &&
                 Objects.equal(fromAccountId, that.fromAccountId) &&
                 Objects.equal(toAccountId, that.toAccountId) &&

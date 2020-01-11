@@ -1,17 +1,17 @@
 package com.moneytransfer.repositories;
 
-import com.moneytransfer.entities.AccountEntity;
+import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import org.javamoney.moneta.Money;
 
 public class AccountRepository {
 
-    public AccountEntity save(AccountCreateRequest accountCreateRequest) {
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setId(1L);
-        accountEntity.setName(accountCreateRequest.getName());
-        accountEntity.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
-        return accountEntity;
+    public Account save(AccountCreateRequest accountCreateRequest) {
+        Account account = new Account();
+        account.setId(1L);
+        account.setName(accountCreateRequest.getName());
+        account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
+        return account;
     }
 
 }

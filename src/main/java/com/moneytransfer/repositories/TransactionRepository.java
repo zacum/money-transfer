@@ -1,18 +1,18 @@
 package com.moneytransfer.repositories;
 
-import com.moneytransfer.entities.TransactionEntity;
+import com.moneytransfer.entities.Transaction;
 import com.moneytransfer.models.transaction.TransactionTransferRequest;
 import org.javamoney.moneta.Money;
 
 public class TransactionRepository {
 
-    public TransactionEntity save(TransactionTransferRequest transactionTransferRequest) {
-        TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(1L);
-        transactionEntity.setFromAccountId(transactionTransferRequest.getFromAccountId());
-        transactionEntity.setToAccountId(transactionTransferRequest.getToAccountId());
-        transactionEntity.setMoney(Money.of(transactionTransferRequest.getAmount(), transactionTransferRequest.getCurrency()));
-        return transactionEntity;
+    public Transaction save(TransactionTransferRequest transactionTransferRequest) {
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
+        transaction.setFromAccountId(transactionTransferRequest.getFromAccountId());
+        transaction.setToAccountId(transactionTransferRequest.getToAccountId());
+        transaction.setMoney(Money.of(transactionTransferRequest.getAmount(), transactionTransferRequest.getCurrency()));
+        return transaction;
     }
 
 }

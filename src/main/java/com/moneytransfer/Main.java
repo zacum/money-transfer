@@ -18,15 +18,7 @@ public class Main {
         Injector injector = Guice.createInjector(new GuiceConfiguration());
         injector.getInstance(RestAPI.class).run();
 
-        Connection connection = DriverManager.getConnection("jdbc:h2:mem:moneytransfer", "", "");
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }));
+        Connection connection = DriverManager.getConnection("jdbc:h2:mem:moneytransfer;INIT=runscript from './src/main/resources/schema.sql'", "", "");
     }
 
 }

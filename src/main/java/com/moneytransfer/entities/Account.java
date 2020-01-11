@@ -3,7 +3,7 @@ package com.moneytransfer.entities;
 import com.google.common.base.Objects;
 import org.javamoney.moneta.Money;
 
-public class AccountEntity {
+public class Account {
 
     private Long id;
     private String name;
@@ -36,8 +36,8 @@ public class AccountEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AccountEntity)) return false;
-        AccountEntity that = (AccountEntity) o;
+        if (!(o instanceof Account)) return false;
+        Account that = (Account) o;
         return Objects.equal(id, that.id) &&
                 Objects.equal(name, that.name) &&
                 Objects.equal(money, that.money);
