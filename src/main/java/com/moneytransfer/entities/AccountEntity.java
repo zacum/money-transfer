@@ -1,13 +1,13 @@
 package com.moneytransfer.entities;
 
 import com.google.common.base.Objects;
-import com.moneytransfer.models.CurrencyType;
+import org.javamoney.moneta.Money;
 
 public class AccountEntity {
 
     private Long id;
     private String name;
-    private CurrencyType currency;
+    private Money money;
 
     public Long getId() {
         return id;
@@ -25,12 +25,12 @@ public class AccountEntity {
         this.name = name;
     }
 
-    public CurrencyType getCurrency() {
-        return currency;
+    public Money getMoney() {
+        return money;
     }
 
-    public void setCurrency(CurrencyType currency) {
-        this.currency = currency;
+    public void setMoney(Money money) {
+        this.money = money;
     }
 
     @Override
@@ -40,12 +40,12 @@ public class AccountEntity {
         AccountEntity that = (AccountEntity) o;
         return Objects.equal(id, that.id) &&
                 Objects.equal(name, that.name) &&
-                currency == that.currency;
+                Objects.equal(money, that.money);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, currency);
+        return Objects.hashCode(id, name, money);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class AccountEntity {
         return "AccountEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", currency=" + currency +
+                ", money=" + money +
                 '}';
     }
 

@@ -1,11 +1,9 @@
 package com.moneytransfer.models.account;
 
-import com.moneytransfer.models.CurrencyType;
-
 public class AccountCreateRequest {
 
     private String name;
-    private CurrencyType currency;
+    private String currency;
 
     public String getName() {
         return name;
@@ -15,11 +13,11 @@ public class AccountCreateRequest {
         this.name = name;
     }
 
-    public CurrencyType getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(CurrencyType currency) {
+    public void setCurrency(String currency) {
         this.currency = currency;
     }
 
