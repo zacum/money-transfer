@@ -10,12 +10,9 @@ public class TransactionService {
     @Inject
     private TransactionRepository transactionRepository;
 
-    public String transferMoney(TransactionCreateRequest transactionCreateRequest) {
+    public boolean transferMoney(TransactionCreateRequest transactionCreateRequest) {
         Transaction transaction = transactionRepository.save(transactionCreateRequest);
-
-        System.out.println(transaction.toString());
-
-        return "ok";
+        return true;
     }
 
 }
