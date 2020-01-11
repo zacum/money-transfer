@@ -1,9 +1,9 @@
-package com.moneytransfer;
+package com.moneytransfer.resources;
 
 import com.google.inject.Inject;
 import com.moneytransfer.services.AccountService;
 
-import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class RestAPI {
 
@@ -11,7 +11,7 @@ public class RestAPI {
     private AccountService accountService;
 
     public void run() {
-        get("/account", (request, response) -> accountService.createAccount("Hello World"));
+        post("/account", (request, response) -> accountService.createAccount(request, response));
     }
 
 }
