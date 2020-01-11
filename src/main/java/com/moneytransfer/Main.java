@@ -2,6 +2,8 @@ package com.moneytransfer;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.moneytransfer.resources.AccountResource;
+import com.moneytransfer.resources.TransactionResource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +17,8 @@ public class Main {
         after(((request, response) -> response.type("application/json")));
 
         Injector injector = Guice.createInjector(new GuiceConfiguration());
-        injector.getInstance(RestAPI.class).run();
+        injector.getInstance(AccountResource.class).run();
+        injector.getInstance(TransactionResource.class).run();
 
         Connection connection = DriverManager.getConnection("jdbc:h2:mem:moneytransfer;INIT=runscript from './src/main/resources/schema.sql'", "", "");
     }
