@@ -2,12 +2,21 @@ package com.moneytransfer.models.transaction;
 
 import java.math.BigDecimal;
 
-public class TransactionTransferRequest {
+public class TransactionCreateRequest {
 
+    private OperationType operation;
     private Long fromAccountId;
     private Long toAccountId;
     private BigDecimal amount;
     private String currency;
+
+    public OperationType getOperation() {
+        return operation;
+    }
+
+    public void setOperation(OperationType operation) {
+        this.operation = operation;
+    }
 
     public Long getFromAccountId() {
         return fromAccountId;
@@ -43,9 +52,10 @@ public class TransactionTransferRequest {
 
     @Override
     public String toString() {
-        return "TransactionTransferRequest{" +
-                "fromAccountId='" + fromAccountId + '\'' +
-                ", toAccountId='" + toAccountId + '\'' +
+        return "TransactionCreateRequest{" +
+                "operation=" + operation +
+                ", fromAccountId=" + fromAccountId +
+                ", toAccountId=" + toAccountId +
                 ", amount=" + amount +
                 ", currency='" + currency + '\'' +
                 '}';

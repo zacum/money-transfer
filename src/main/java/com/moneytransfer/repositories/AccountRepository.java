@@ -14,4 +14,12 @@ public class AccountRepository {
         return account;
     }
 
+    public Account get(Long accountId) {
+        Account account = new Account();
+        account.setId(accountId);
+        account.setName("Victor");
+        account.setMoney(Money.of(0, "EUR"));
+        return account;
+    }
+
 }

@@ -1,10 +1,13 @@
 package com.moneytransfer.models.account;
 
+import java.math.BigDecimal;
+
 public class AccountCreateResponse {
 
     private Long id;
     private String name;
-    private String balance;
+    private BigDecimal amount;
+    private String currency;
 
     public Long getId() {
         return id;
@@ -22,12 +25,20 @@ public class AccountCreateResponse {
         this.name = name;
     }
 
-    public String getBalance() {
-        return balance;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setBalance(String balance) {
-        this.balance = balance;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     @Override
@@ -35,7 +46,8 @@ public class AccountCreateResponse {
         return "AccountCreateResponse{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", balance=" + balance +
+                ", amount='" + amount + '\'' +
+                ", currency='" + currency + '\'' +
                 '}';
     }
 
