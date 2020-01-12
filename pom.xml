@@ -41,6 +41,11 @@
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
         </dependency>
+        <dependency>
+            <groupId>com.dieselpoint</groupId>
+            <artifactId>norm</artifactId>
+            <version>0.8.6</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

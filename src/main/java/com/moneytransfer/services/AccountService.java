@@ -5,6 +5,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
+import org.javamoney.moneta.Money;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -28,11 +29,12 @@ public class AccountService {
     }
 
     private AccountResponse getAccountCreateResponse(Account account) {
+        Money money = Money.of(account.getAmount(), account.getCurrency());
         AccountResponse accountResponse = new AccountResponse();
         accountResponse.setId(account.getId());
         accountResponse.setName(account.getName());
-        accountResponse.setAmount(BigDecimal.valueOf(account.getMoney().getNumber().doubleValueExact()));
-        accountResponse.setCurrency(account.getMoney().getCurrency().getCurrencyCode());
+        accountResponse.setAmount(BigDecimal.valueOf(money.getNumber().doubleValueExact()));
+        accountResponse.setCurrency(money.getCurrency().getCurrencyCode());
         return accountResponse;
     }
 

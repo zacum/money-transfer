@@ -21,7 +21,7 @@ public class TransactionResource {
         post("/transaction", (request, response) -> {
             TransactionCreateRequest transactionCreateRequest = getTransactionCreateRequest(request);
             createTransaction(transactionCreateRequest);
-            halt(201);
+            response.status(201);
             return "";
         });
     }

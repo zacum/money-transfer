@@ -3,11 +3,24 @@ package com.moneytransfer.entities;
 import com.google.common.base.Objects;
 import org.javamoney.moneta.Money;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+
+@Table(name = "account")
 public class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private Money money;
+
+    private BigDecimal amount;
+
+    private String currency;
 
     public Long getId() {
         return id;
@@ -25,12 +38,25 @@ public class Account {
         this.name = name;
     }
 
-    public Money getMoney() {
-        return money;
+    public void setMoney(Money money) {
+        this.amount = BigDecimal.valueOf(money.getNumber().doubleValueExact());
+        this.currency = money.getCurrency().getCurrencyCode();
     }
 
-    public void setMoney(Money money) {
-        this.money = money;
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     @Override
@@ -39,21 +65,21 @@ public class Account {
         if (!(o instanceof Account)) return false;
         Account that = (Account) o;
         return Objects.equal(id, that.id) &&
-                Objects.equal(name, that.name) &&
-                Objects.equal(money, that.money);
+                Objects.equal(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, money);
+        return Objects.hashCode(id, name);
     }
 
     @Override
     public String toString() {
-        return "AccountEntity{" +
+        return "Account{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", money=" + money +
+                ", amount=" + amount +
+                ", currency='" + currency + '\'' +
                 '}';
     }
 

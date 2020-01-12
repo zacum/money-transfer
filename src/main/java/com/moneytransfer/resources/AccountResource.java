@@ -1,5 +1,6 @@
 package com.moneytransfer.resources;
 
+import com.dieselpoint.norm.DbException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
@@ -22,6 +23,7 @@ public class AccountResource {
         post("/account", (request, response) -> {
             AccountCreateRequest accountCreateRequest = getAccountCreateRequest(request);
             AccountResponse account = getAccountResponse(accountCreateRequest);
+            response.status(201);
             return new Gson().toJson(account);
         });
         get("/account/:id", (request, response) -> {
@@ -48,6 +50,9 @@ public class AccountResource {
             return accountService.createAccount(accountCreateRequest);
         } catch (UnknownCurrencyException e) {
             halt(400, "Invalid currency code");
+            throw e;
+        } catch (DbException e) {
+            halt(400, "Account name already exists");
             throw e;
         }
     }

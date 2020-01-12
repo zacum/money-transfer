@@ -1,5 +1,6 @@
 package com.moneytransfer;
 
+import com.dieselpoint.norm.Database;
 import com.google.inject.AbstractModule;
 import com.moneytransfer.repositories.AccountRepository;
 import com.moneytransfer.repositories.TransactionRepository;
@@ -10,6 +11,8 @@ public class GuiceConfiguration extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(Database.class).asEagerSingleton();
+
         bind(AccountService.class).asEagerSingleton();
         bind(AccountRepository.class).asEagerSingleton();
 
