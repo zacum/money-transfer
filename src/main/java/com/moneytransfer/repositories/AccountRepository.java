@@ -14,26 +14,25 @@ public class AccountRepository {
     @Inject
     private Database database;
 
-    public Optional<Account> save(AccountCreateRequest accountCreateRequest) {
+    public Account save(AccountCreateRequest accountCreateRequest) {
         Account account = new Account();
         account.setName(accountCreateRequest.getName());
         account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
 
-        database.table("account").insert(account);
-        return database.where("name=?", account.getName()).results(Account.class)
-                .stream().findFirst();
+        database.table("account").generatedKeyReceiver(account, "id").insert(account);
+        return account;
     }
 
     public List<Account> getAccounts() {
-        return database.orderBy("id").results(Account.class);
+        return database.table("account").orderBy("id").results(Account.class);
     }
 
     public Optional<Account> get(Long accountId) {
-        List<Account> accounts = database.where("id=?", accountId).results(Account.class);
-        if (accounts.isEmpty()) {
+        List<Account> accounts = database.table("account").where("id=?", accountId).results(Account.class);
+        if (accounts.size() != 1) {
             return Optional.empty();
         }
-        return Optional.of(accounts.get(0));
+        return accounts.stream().findFirst();
     }
 
 }

@@ -8,8 +8,11 @@ import java.math.BigDecimal;
 public class AccountResponse {
 
     private Long id;
+
     private String name;
+
     private BigDecimal amount;
+
     private String currency;
 
     public AccountResponse() {

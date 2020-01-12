@@ -1,13 +1,21 @@
 package com.moneytransfer.models.transaction;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.math.BigDecimal;
 
 public class TransactionCreateRequest {
 
     private OperationType operation;
+
+    @SerializedName("from_account_id")
     private Long fromAccountId;
+
+    @SerializedName("to_account_id")
     private Long toAccountId;
+
     private BigDecimal amount;
+
     private String currency;
 
     public OperationType getOperation() {

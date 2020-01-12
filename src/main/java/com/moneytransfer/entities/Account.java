@@ -3,16 +3,14 @@ package com.moneytransfer.entities;
 import com.google.common.base.Objects;
 import org.javamoney.moneta.Money;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Table(name = "account")
 public class Account {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -36,6 +34,11 @@ public class Account {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addMoney(Money money) {
+        Money original = Money.of(this.amount, this.currency);
+        setMoney(original.add(money));
     }
 
     public void setMoney(Money money) {

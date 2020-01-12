@@ -15,12 +15,9 @@ public class AccountService {
     @Inject
     private AccountRepository accountRepository;
 
-    public Optional<AccountResponse> createAccount(AccountCreateRequest accountCreateRequest) {
-        Optional<Account> accountOpt = accountRepository.save(accountCreateRequest);
-        if (accountOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(new AccountResponse(accountOpt.get()));
+    public AccountResponse createAccount(AccountCreateRequest accountCreateRequest) {
+        Account account = accountRepository.save(accountCreateRequest);
+        return new AccountResponse(account);
     }
 
     public List<AccountResponse> getAccounts() {

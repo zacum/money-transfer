@@ -28,8 +28,9 @@ public class TransactionService {
             transactionRepository.save(getWithdrawTransaction(transactionCreateRequest));
         } else if (operation == OperationType.TRANSFER) {
             transactionRepository.save(getTransferTransaction(transactionCreateRequest));
+        } else {
+            throw new IllegalTransactionOperationTypeException("Operation Type " + operation + " is not supported");
         }
-        throw new IllegalTransactionOperationTypeException("Operation Type " + operation + " is not supported");
     }
 
     private Receivables getDepositTransaction(TransactionCreateRequest transactionCreateRequest) {

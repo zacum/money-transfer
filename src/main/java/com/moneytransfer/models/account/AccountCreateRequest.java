@@ -3,6 +3,7 @@ package com.moneytransfer.models.account;
 public class AccountCreateRequest {
 
     private String name;
+
     private String currency;
 
     public String getName() {

@@ -3,16 +3,14 @@ package com.moneytransfer.entities;
 import com.google.common.base.Objects;
 import org.javamoney.moneta.Money;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Table(name = "payables")
 public class Payables {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
