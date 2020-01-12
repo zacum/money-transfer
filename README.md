@@ -10,9 +10,11 @@ Money Transfer Between Accounts
 # Frameworks
 
 * Spark
-* Norm
 * Guice
 * Gson
+* Moneta
+* H2
+* Norm
 * slf4j
 * JUnit 4
 
