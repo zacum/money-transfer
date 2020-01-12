@@ -12,10 +12,13 @@ public class Transfers {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "payables_id")
     private Long payablesId;
 
+    @Column(name = "receivables_id")
     private Long receivablesId;
 
+    @Id
     public Long getId() {
         return id;
     }
@@ -24,6 +27,7 @@ public class Transfers {
         this.id = id;
     }
 
+    @Column(name = "payables_id")
     public Long getPayablesId() {
         return payablesId;
     }
@@ -32,6 +36,7 @@ public class Transfers {
         this.payablesId = payablesId;
     }
 
+    @Column(name = "receivables_id")
     public Long getReceivablesId() {
         return receivablesId;
     }

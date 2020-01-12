@@ -14,12 +14,14 @@ public class Receivables {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "account_id")
     private Long accountId;
 
     private BigDecimal amount;
 
     private String currency;
 
+    @Id
     public Long getId() {
         return id;
     }
@@ -28,6 +30,7 @@ public class Receivables {
         this.id = id;
     }
 
+    @Column(name = "account_id")
     public Long getAccountId() {
         return accountId;
     }

@@ -27,10 +27,9 @@ public class TransactionRepository {
                 throw new IllegalTransactionAccountException("Account " + receivables.getAccountId() + " not fount");
             }
             Account account = accounts.stream().findFirst().orElseThrow();
-            System.out.println(account);
             account.addMoney(Money.of(receivables.getAmount(), receivables.getCurrency()));
-            transactionQuery.table("account").generatedKeyReceiver(account, "id").update(account);
-            transactionQuery.table("receivables").insert(receivables);
+            transactionQuery.table("account").update(account);
+            transactionQuery.table("receivables").generatedKeyReceiver(account, "id").insert(receivables);
             transaction.commit();
         } catch (Throwable t) {
             transaction.rollback();

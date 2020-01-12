@@ -20,6 +20,7 @@ public class Account {
 
     private String currency;
 
+    @Id
     public Long getId() {
         return id;
     }
