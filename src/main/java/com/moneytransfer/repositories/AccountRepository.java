@@ -18,7 +18,6 @@ public class AccountRepository {
         Account account = new Account();
         account.setName(accountCreateRequest.getName());
         account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
-
         database.table("account").generatedKeyReceiver(account, "id").insert(account);
         return account;
     }

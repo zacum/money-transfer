@@ -1,16 +1,11 @@
 package com.moneytransfer.resources;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
-import com.moneytransfer.exceptions.IllegalTransactionException;
+import com.moneytransfer.exceptions.IllegalTransactionNegativeAmountException;
 import com.moneytransfer.models.transaction.TransactionCreateRequest;
 import com.moneytransfer.services.TransactionService;
-import spark.Request;
 
-import javax.money.UnknownCurrencyException;
-
-import static spark.Spark.halt;
 import static spark.Spark.post;
 
 public class TransactionResource {
@@ -20,32 +15,14 @@ public class TransactionResource {
 
     public void run() {
         post("/transaction", (request, response) -> {
-            TransactionCreateRequest transactionCreateRequest = getTransactionCreateRequest(request);
-            createTransaction(transactionCreateRequest);
+            TransactionCreateRequest transactionCreateRequest = new Gson().fromJson(request.body(), TransactionCreateRequest.class);
+            if (transactionCreateRequest.getAmount().signum() < 0) {
+                throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
+            }
+            transactionService.transferMoney(transactionCreateRequest);
             response.status(201);
             return "";
         });
-    }
-
-    private TransactionCreateRequest getTransactionCreateRequest(Request request) {
-        try {
-            return new Gson().fromJson(request.body(), TransactionCreateRequest.class);
-        } catch (JsonSyntaxException e) {
-            halt(400, "Invalid JSON");
-            throw e;
-        }
-    }
-
-    private void createTransaction(TransactionCreateRequest transactionCreateRequest) {
-        try {
-            transactionService.transferMoney(transactionCreateRequest);
-        } catch (UnknownCurrencyException e) {
-            halt(400, "Invalid currency code");
-            throw e;
-        } catch (IllegalTransactionException e) {
-            halt(400, e.getMessage());
-            throw e;
-        }
     }
 
 }
