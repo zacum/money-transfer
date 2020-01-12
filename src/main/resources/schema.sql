@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `transaction`;
+DROP TABLE IF EXISTS transfers;
 DROP TABLE IF EXISTS payables;
 DROP TABLE IF EXISTS receivables;
 DROP TABLE IF EXISTS account;
@@ -29,7 +29,7 @@ CREATE TABLE receivables (
   FOREIGN KEY (account_id) REFERENCES account(id)
 );
 
-CREATE TABLE `transaction` (
+CREATE TABLE transfers (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   payables_id BIGINT NOT NULL,
   receivables_id BIGINT NOT NULL,

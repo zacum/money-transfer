@@ -3,6 +3,7 @@ package com.moneytransfer.resources;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
+import com.moneytransfer.exceptions.IllegalTransactionException;
 import com.moneytransfer.models.transaction.TransactionCreateRequest;
 import com.moneytransfer.services.TransactionService;
 import spark.Request;
@@ -40,6 +41,9 @@ public class TransactionResource {
             transactionService.transferMoney(transactionCreateRequest);
         } catch (UnknownCurrencyException e) {
             halt(400, "Invalid currency code");
+            throw e;
+        } catch (IllegalTransactionException e) {
+            halt(400, e.getMessage());
             throw e;
         }
     }

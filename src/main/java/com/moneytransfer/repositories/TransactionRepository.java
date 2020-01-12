@@ -4,6 +4,7 @@ import com.dieselpoint.norm.Database;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
+import com.moneytransfer.entities.Transfers;
 
 public class TransactionRepository {
 
@@ -18,8 +19,8 @@ public class TransactionRepository {
         database.table("payables").insert(payables);
     }
 
-    public void transfer(Payables payables) {
-        database.table("payables").insert(payables);
+    public void save(Transfers transfers) {
+        database.table("transfers").insert(transfers);
     }
 
 }
