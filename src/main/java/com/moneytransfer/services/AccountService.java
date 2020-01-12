@@ -8,7 +8,9 @@ import com.moneytransfer.repositories.AccountRepository;
 import org.javamoney.moneta.Money;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AccountService {
 
@@ -18,6 +20,12 @@ public class AccountService {
     public AccountResponse createAccount(AccountCreateRequest accountCreateRequest) {
         Account account = accountRepository.save(accountCreateRequest);
         return getAccountCreateResponse(account);
+    }
+
+    public List<AccountResponse> getAccounts() {
+        return accountRepository.getAccounts().stream()
+                .map(this::getAccountCreateResponse)
+                .collect(Collectors.toList());
     }
 
     public Optional<AccountResponse> getAccount(Long accountId) {

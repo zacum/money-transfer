@@ -23,6 +23,10 @@ public class AccountRepository {
         return database.where("name=?", account.getName()).results(Account.class).get(0);
     }
 
+    public List<Account> getAccounts() {
+        return database.orderBy("id").results(Account.class);
+    }
+
     public Optional<Account> get(Long accountId) {
         List<Account> accounts = database.where("id=?", accountId).results(Account.class);
         if (accounts.isEmpty()) {

@@ -26,6 +26,9 @@ public class AccountResource {
             response.status(201);
             return new Gson().toJson(account);
         });
+        get("/account", (request, response) -> {
+            return new Gson().toJson(accountService.getAccounts());
+        });
         get("/account/:id", (request, response) -> {
             Long accountId = getAccountId(request);
             Optional<AccountResponse> accountOpt = accountService.getAccount(accountId);
