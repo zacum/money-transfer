@@ -5,6 +5,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
+import org.javamoney.moneta.Money;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +17,10 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public AccountResponse createAccount(AccountCreateRequest accountCreateRequest) {
-        Account account = accountRepository.save(accountCreateRequest);
-        return new AccountResponse(account);
+        Account account = new Account();
+        account.setName(accountCreateRequest.getName());
+        account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
+        return new AccountResponse(accountRepository.save(account));
     }
 
     public List<AccountResponse> getAccounts() {
@@ -27,11 +30,11 @@ public class AccountService {
     }
 
     public Optional<AccountResponse> getAccount(Long accountId) {
-        Optional<Account> accountOpt = accountRepository.get(accountId);
-        if (accountOpt.isEmpty()) {
+        List<Account> accounts = accountRepository.get(accountId);
+        if (accounts.size() != 1) {
             return Optional.empty();
         }
-        return Optional.of(new AccountResponse(accountOpt.get()));
+        return Optional.of(new AccountResponse(accounts.get(0)));
     }
 
 }
