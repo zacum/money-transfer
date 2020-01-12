@@ -3,7 +3,6 @@ package com.moneytransfer.services;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
-import com.moneytransfer.entities.Transfers;
 import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import com.moneytransfer.exceptions.IllegalTransactionOperationTypeException;
 import com.moneytransfer.models.transaction.OperationType;
@@ -27,7 +26,12 @@ public class TransactionService {
         } else if (operation == OperationType.WITHDRAW) {
             transactionRepository.save(getWithdrawTransaction(transactionCreateRequest));
         } else if (operation == OperationType.TRANSFER) {
-            transactionRepository.save(getTransferTransaction(transactionCreateRequest));
+            Receivables depositTransaction = getDepositTransaction(transactionCreateRequest);
+            Payables withdrawTransaction = getWithdrawTransaction(transactionCreateRequest);
+            if (transactionCreateRequest.getToAccountId().equals(transactionCreateRequest.getFromAccountId())) {
+                throw new IllegalTransactionAccountException("Cannot transfer money to and from the same account");
+            }
+            transactionRepository.save(depositTransaction, withdrawTransaction);
         } else {
             throw new IllegalTransactionOperationTypeException("Operation Type " + operation + " is not supported");
         }
@@ -53,20 +57,6 @@ public class TransactionService {
         payables.setAccountId(transactionCreateRequest.getFromAccountId());
         payables.setMoney(Money.of(transactionCreateRequest.getAmount(), transactionCreateRequest.getCurrency()));
         return payables;
-    }
-
-    private Transfers getTransferTransaction(TransactionCreateRequest transactionCreateRequest) {
-        if (transactionCreateRequest.getToAccountId() == null) {
-            throw new IllegalTransactionAccountException("Receiving account id is required for TRANSFER operation");
-        }
-        if (transactionCreateRequest.getFromAccountId() == null) {
-            throw new IllegalTransactionAccountException("Paying account id is required for TRANSFER operation");
-        }
-
-        Transfers transfers = new Transfers();
-        transfers.setPayablesId(0L);
-        transfers.setReceivablesId(0L);
-        return transfers;
     }
 
 }
