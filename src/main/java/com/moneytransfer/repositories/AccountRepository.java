@@ -14,13 +14,14 @@ public class AccountRepository {
     @Inject
     private Database database;
 
-    public Account save(AccountCreateRequest accountCreateRequest) {
+    public Optional<Account> save(AccountCreateRequest accountCreateRequest) {
         Account account = new Account();
         account.setName(accountCreateRequest.getName());
         account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
 
         database.table("account").insert(account);
-        return database.where("name=?", account.getName()).results(Account.class).get(0);
+        return database.where("name=?", account.getName()).results(Account.class)
+                .stream().findFirst();
     }
 
     public List<Account> getAccounts() {

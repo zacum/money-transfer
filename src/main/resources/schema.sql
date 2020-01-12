@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `transaction`;
 DROP TABLE IF EXISTS payables;
 DROP TABLE IF EXISTS receivables;
 DROP TABLE IF EXISTS account;
@@ -26,4 +27,13 @@ CREATE TABLE receivables (
   currency CHAR(3) NOT NULL,
   row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+CREATE TABLE `transaction` (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  payables_id BIGINT NOT NULL,
+  receivables_id BIGINT NOT NULL,
+  row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (payables_id) REFERENCES payables(id),
+  FOREIGN KEY (receivables_id) REFERENCES receivables(id)
 );

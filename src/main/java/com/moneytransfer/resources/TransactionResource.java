@@ -35,9 +35,9 @@ public class TransactionResource {
         }
     }
 
-    private boolean createTransaction(TransactionCreateRequest transactionCreateRequest) {
+    private void createTransaction(TransactionCreateRequest transactionCreateRequest) {
         try {
-            return transactionService.transferMoney(transactionCreateRequest);
+            transactionService.transferMoney(transactionCreateRequest);
         } catch (UnknownCurrencyException e) {
             halt(400, "Invalid currency code");
             throw e;

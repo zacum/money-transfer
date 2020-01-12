@@ -5,9 +5,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
-import org.javamoney.moneta.Money;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,14 +15,17 @@ public class AccountService {
     @Inject
     private AccountRepository accountRepository;
 
-    public AccountResponse createAccount(AccountCreateRequest accountCreateRequest) {
-        Account account = accountRepository.save(accountCreateRequest);
-        return getAccountCreateResponse(account);
+    public Optional<AccountResponse> createAccount(AccountCreateRequest accountCreateRequest) {
+        Optional<Account> accountOpt = accountRepository.save(accountCreateRequest);
+        if (accountOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new AccountResponse(accountOpt.get()));
     }
 
     public List<AccountResponse> getAccounts() {
         return accountRepository.getAccounts().stream()
-                .map(this::getAccountCreateResponse)
+                .map(AccountResponse::new)
                 .collect(Collectors.toList());
     }
 
@@ -33,17 +34,7 @@ public class AccountService {
         if (accountOpt.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(getAccountCreateResponse(accountOpt.get()));
-    }
-
-    private AccountResponse getAccountCreateResponse(Account account) {
-        Money money = Money.of(account.getAmount(), account.getCurrency());
-        AccountResponse accountResponse = new AccountResponse();
-        accountResponse.setId(account.getId());
-        accountResponse.setName(account.getName());
-        accountResponse.setAmount(BigDecimal.valueOf(money.getNumber().doubleValueExact()));
-        accountResponse.setCurrency(money.getCurrency().getCurrencyCode());
-        return accountResponse;
+        return Optional.of(new AccountResponse(accountOpt.get()));
     }
 
 }

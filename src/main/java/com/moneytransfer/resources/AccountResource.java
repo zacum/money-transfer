@@ -22,11 +22,16 @@ public class AccountResource {
     public void run() {
         post("/account", (request, response) -> {
             AccountCreateRequest accountCreateRequest = getAccountCreateRequest(request);
-            AccountResponse account = getAccountResponse(accountCreateRequest);
+            Optional<AccountResponse> accountOpt = getAccountResponse(accountCreateRequest);
+            if (accountOpt.isEmpty()) {
+                halt(409);
+            }
             response.status(201);
-            return new Gson().toJson(account);
+            return new Gson().toJson(accountOpt.get());
         });
         get("/account", (request, response) -> {
+            // FIXME: This endpoint is for testing purposes only
+            // FIXME: The production version of it needs to implement pagination
             return new Gson().toJson(accountService.getAccounts());
         });
         get("/account/:id", (request, response) -> {
@@ -48,14 +53,14 @@ public class AccountResource {
         }
     }
 
-    private AccountResponse getAccountResponse(AccountCreateRequest accountCreateRequest) {
+    private Optional<AccountResponse> getAccountResponse(AccountCreateRequest accountCreateRequest) {
         try {
             return accountService.createAccount(accountCreateRequest);
         } catch (UnknownCurrencyException e) {
             halt(400, "Invalid currency code");
             throw e;
         } catch (DbException e) {
-            halt(400, "Account name already exists");
+            halt(409, "Account name already exists");
             throw e;
         }
     }

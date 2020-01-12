@@ -1,18 +1,25 @@
 package com.moneytransfer.repositories;
 
-import com.moneytransfer.entities.Transaction;
-import com.moneytransfer.models.transaction.TransactionCreateRequest;
-import org.javamoney.moneta.Money;
+import com.dieselpoint.norm.Database;
+import com.google.inject.Inject;
+import com.moneytransfer.entities.Payables;
+import com.moneytransfer.entities.Receivables;
 
 public class TransactionRepository {
 
-    public Transaction save(TransactionCreateRequest transactionCreateRequest) {
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setFromAccountId(transactionCreateRequest.getFromAccountId());
-        transaction.setToAccountId(transactionCreateRequest.getToAccountId());
-        transaction.setMoney(Money.of(transactionCreateRequest.getAmount(), transactionCreateRequest.getCurrency()));
-        return transaction;
+    @Inject
+    private Database database;
+
+    public void save(Receivables receivables) {
+        database.table("receivables").insert(receivables);
+    }
+
+    public void save(Payables payables) {
+        database.table("payables").insert(payables);
+    }
+
+    public void transfer(Payables payables) {
+        database.table("payables").insert(payables);
     }
 
 }
