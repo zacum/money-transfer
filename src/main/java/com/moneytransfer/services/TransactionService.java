@@ -29,7 +29,8 @@ public class TransactionService {
     public TransactionResponse createTransfers(TransfersCreateRequest transfersCreateRequest) {
         Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
         Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
-        return new TransactionResponse(transactionRepository.save(payables, receivables, new Transfers()));
+        Transfers transfers = transactionRepository.save(payables, receivables, new Transfers());
+        return new TransactionResponse(payables, receivables, transfers);
     }
 
     private Payables getPayables(PayablesCreateRequest payablesCreateRequest) {

@@ -44,10 +44,15 @@ public class TransactionResponse {
         this.currency = money.getCurrency().getCurrencyCode();
     }
 
-    public TransactionResponse(Transfers transfers) {
+    public TransactionResponse(Payables payables, Receivables receivables, Transfers transfers) {
+        Money money = Money.of(payables.getAmount(), payables.getCurrency());
         this.id = transfers.getId();
+        this.fromAccountId = payables.getAccountId();
+        this.toAccountId = receivables.getAccountId();
         this.payablesId = transfers.getPayablesId();
         this.receivablesId = transfers.getReceivablesId();
+        this.amount = BigDecimal.valueOf(money.getNumber().doubleValueExact());
+        this.currency = money.getCurrency().getCurrencyCode();
     }
 
     @Override
