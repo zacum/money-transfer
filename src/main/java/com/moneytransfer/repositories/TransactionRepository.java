@@ -7,6 +7,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
+import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import com.moneytransfer.exceptions.IllegalTransactionBalanceException;
 import org.javamoney.moneta.Money;
 
@@ -15,9 +16,10 @@ public class TransactionRepository {
     @Inject
     private Database database;
 
-    public Payables save(Payables payables, Account account) {
+    public Payables save(Payables payables) {
         Transaction transaction = database.startTransaction();
         try {
+            Account account = getAccountOrThrowNotFound(payables.getAccountId(), transaction);
             payables = savePayables(payables, transaction, account);
             transaction.commit();
         } catch (Throwable t) {
@@ -27,9 +29,10 @@ public class TransactionRepository {
         return payables;
     }
 
-    public Receivables save(Receivables receivables, Account account) {
+    public Receivables save(Receivables receivables) {
         Transaction transaction = database.startTransaction();
         try {
+            Account account = getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
             receivables = saveReceivables(receivables, transaction, account);
             transaction.commit();
         } catch (Throwable t) {
@@ -39,9 +42,11 @@ public class TransactionRepository {
         return receivables;
     }
 
-    public Transfers save(Payables payables, Receivables receivables, Transfers transfers, Account accountFrom, Account accountTo) {
+    public Transfers save(Payables payables, Receivables receivables, Transfers transfers) {
         Transaction transaction = database.startTransaction();
         try {
+            Account accountFrom = getAccountOrThrowNotFound(payables.getAccountId(), transaction);
+            Account accountTo = getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
             payables = savePayables(payables, transaction, accountFrom);
             receivables = saveReceivables(receivables, transaction, accountTo);
             transfers.setPayablesId(payables.getId());
@@ -93,6 +98,17 @@ public class TransactionRepository {
                 .generatedKeyReceiver(transfers, "id")
                 .insert(transfers);
         return transfers;
+    }
+
+    private Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
+        return database
+                .transaction(transaction)
+                .table("account")
+                .where("id=?", accountId)
+                .results(Account.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
     }
 
 }
