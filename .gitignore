@@ -1,2 +1,6 @@
 .idea/*
+.idea/$CACHE_FILE$
+.idea/.gitignore
+.idea/sbt.xml
+.resourceCache
 target/

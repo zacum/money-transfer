@@ -11,6 +11,8 @@ import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import com.moneytransfer.exceptions.IllegalTransactionBalanceException;
 import org.javamoney.moneta.Money;
 
+import javax.money.convert.MonetaryConversions;
+
 public class TransactionRepository {
 
     @Inject
@@ -61,7 +63,12 @@ public class TransactionRepository {
     }
 
     private Payables savePayables(Payables payables, Transaction transaction, Account account) {
-        account.subtractMoney(Money.of(payables.getAmount(), payables.getCurrency()));
+        Money original = Money.of(account.getAmount(), account.getCurrency());
+        Money modification = Money.of(payables.getAmount(), payables.getCurrency());
+        if (!payables.getCurrency().equals(account.getCurrency())) {
+            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
+        }
+        account.setMoney(original.subtract(modification));
         if (account.getAmount().signum() < 0) {
             throw new IllegalTransactionBalanceException("Paying account does not have sufficient funds");
         }
@@ -78,7 +85,12 @@ public class TransactionRepository {
     }
 
     private Receivables saveReceivables(Receivables receivables, Transaction transaction, Account account) {
-        account.addMoney(Money.of(receivables.getAmount(), receivables.getCurrency()));
+        Money original = Money.of(account.getAmount(), account.getCurrency());
+        Money modification = Money.of(receivables.getAmount(), receivables.getCurrency());
+        if (!receivables.getCurrency().equals(account.getCurrency())) {
+            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
+        }
+        account.setMoney(original.add(modification));
         database
                 .transaction(transaction)
                 .table("account")

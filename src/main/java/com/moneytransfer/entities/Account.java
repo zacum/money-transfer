@@ -37,16 +37,6 @@ public class Account {
         this.name = name;
     }
 
-    public void addMoney(Money money) {
-        Money original = Money.of(this.amount, this.currency);
-        setMoney(original.add(money));
-    }
-
-    public void subtractMoney(Money money) {
-        Money original = Money.of(this.amount, this.currency);
-        setMoney(original.subtract(money));
-    }
-
     public void setMoney(Money money) {
         this.amount = BigDecimal.valueOf(money.getNumber().doubleValueExact());
         this.currency = money.getCurrency().getCurrencyCode();
