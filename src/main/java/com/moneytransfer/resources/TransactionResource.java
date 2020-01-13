@@ -17,33 +17,34 @@ public class TransactionResource {
     private TransactionService transactionService;
 
     public void run() {
+        Gson gson = new Gson();
         path("/transaction", () -> {
             before("/*", ((request, response) -> response.status(201)));
             post("/payables", (request, response) -> {
-                PayablesCreateRequest payablesCreateRequest = new Gson().fromJson(request.body(), PayablesCreateRequest.class);
+                PayablesCreateRequest payablesCreateRequest = gson.fromJson(request.body(), PayablesCreateRequest.class);
                 if (payablesCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
-                transactionService.savePayables(payablesCreateRequest);
+                transactionService.createPayables(payablesCreateRequest);
                 return "";
             });
             post("/receivables", (request, response) -> {
-                ReceivablesCreateRequest receivablesCreateRequest = new Gson().fromJson(request.body(), ReceivablesCreateRequest.class);
+                ReceivablesCreateRequest receivablesCreateRequest = gson.fromJson(request.body(), ReceivablesCreateRequest.class);
                 if (receivablesCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
-                transactionService.saveReceivables(receivablesCreateRequest);
+                transactionService.createReceivables(receivablesCreateRequest);
                 return "";
             });
             post("/transfers", (request, response) -> {
-                TransfersCreateRequest transfersCreateRequest = new Gson().fromJson(request.body(), TransfersCreateRequest.class);
+                TransfersCreateRequest transfersCreateRequest = gson.fromJson(request.body(), TransfersCreateRequest.class);
                 if (transfersCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
                 if (transfersCreateRequest.getToAccountId().equals(transfersCreateRequest.getFromAccountId())) {
                     throw new IllegalTransactionAccountException("Cannot transfer money to and from the same account");
                 }
-                transactionService.saveTransfers(transfersCreateRequest);
+                transactionService.createTransfers(transfersCreateRequest);
                 return "";
             });
         });

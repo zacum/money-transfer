@@ -1,8 +1,11 @@
 package com.moneytransfer.services;
 
 import com.google.inject.Inject;
+import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
+import com.moneytransfer.entities.Transfers;
+import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import com.moneytransfer.models.transaction.TransfersCreateRequest;
@@ -18,8 +21,31 @@ public class TransactionService {
     @Inject
     private TransactionRepository transactionRepository;
 
-    public void savePayables(PayablesCreateRequest payablesCreateRequest) {
-        transactionRepository.save(getPayables(payablesCreateRequest));
+    public void createPayables(PayablesCreateRequest payablesCreateRequest) {
+        Payables payables = getPayables(payablesCreateRequest);
+        Account accountFrom = getAccountOrThrowNotFound(payablesCreateRequest.getAccountId());
+        transactionRepository.save(payables, accountFrom);
+    }
+
+
+    public void createReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
+        Receivables receivables = getReceivables(receivablesCreateRequest);
+        Account accountTo = getAccountOrThrowNotFound(receivablesCreateRequest.getAccountId());
+        transactionRepository.save(receivables, accountTo);
+    }
+
+    public void createTransfers(TransfersCreateRequest transfersCreateRequest) {
+        Transfers transfers = new Transfers();
+        Account accountFrom = getAccountOrThrowNotFound(transfersCreateRequest.getFromAccountId());
+        Account accountTo = getAccountOrThrowNotFound(transfersCreateRequest.getToAccountId());
+        Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
+        Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
+        transactionRepository.save(payables, receivables, transfers, accountFrom, accountTo);
+    }
+
+    private Account getAccountOrThrowNotFound(Long accountId) {
+        return accountRepository.get(accountId)
+                .orElseThrow(() -> new IllegalTransactionAccountException("Paying account id is not found"));
     }
 
     private Payables getPayables(PayablesCreateRequest payablesCreateRequest) {
@@ -29,21 +55,11 @@ public class TransactionService {
         return payables;
     }
 
-    public void saveReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
-        transactionRepository.save(getReceivables(receivablesCreateRequest));
-    }
-
     private Receivables getReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
         Receivables receivables = new Receivables();
         receivables.setAccountId(receivablesCreateRequest.getAccountId());
         receivables.setMoney(Money.of(receivablesCreateRequest.getAmount(), receivablesCreateRequest.getCurrency()));
         return receivables;
-    }
-
-    public void saveTransfers(TransfersCreateRequest transfersCreateRequest) {
-        Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
-        Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
-        transactionRepository.save(payables, receivables);
     }
 
 }

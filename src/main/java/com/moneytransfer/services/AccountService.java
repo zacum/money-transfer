@@ -30,11 +30,8 @@ public class AccountService {
     }
 
     public Optional<AccountResponse> getAccount(Long accountId) {
-        List<Account> accounts = accountRepository.get(accountId);
-        if (accounts.size() != 1) {
-            return Optional.empty();
-        }
-        return Optional.of(new AccountResponse(accounts.get(0)));
+        return accountRepository.get(accountId)
+                .map(AccountResponse::new);
     }
 
 }

@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.moneytransfer.entities.Account;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AccountRepository {
 
@@ -12,16 +13,27 @@ public class AccountRepository {
     private Database database;
 
     public Account save(Account account) {
-        database.table("account").generatedKeyReceiver(account, "id").insert(account);
+        database
+                .table("account")
+                .generatedKeyReceiver(account, "id")
+                .insert(account);
         return account;
     }
 
     public List<Account> getAccounts() {
-        return database.table("account").orderBy("id").results(Account.class);
+        return database
+                .table("account")
+                .orderBy("id")
+                .results(Account.class);
     }
 
-    public List<Account> get(Long accountId) {
-        return database.table("account").where("id=?", accountId).results(Account.class);
+    public Optional<Account> get(Long accountId) {
+        return database
+                .table("account")
+                .where("id=?", accountId)
+                .results(Account.class)
+                .stream()
+                .findFirst();
     }
 
 }
