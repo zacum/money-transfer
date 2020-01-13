@@ -27,7 +27,6 @@ public class TransactionService {
         transactionRepository.save(payables, accountFrom);
     }
 
-
     public void createReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
         Receivables receivables = getReceivables(receivablesCreateRequest);
         Account accountTo = getAccountOrThrowNotFound(receivablesCreateRequest.getAccountId());
@@ -45,7 +44,7 @@ public class TransactionService {
 
     private Account getAccountOrThrowNotFound(Long accountId) {
         return accountRepository.get(accountId)
-                .orElseThrow(() -> new IllegalTransactionAccountException("Paying account id is not found"));
+                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
     }
 
     private Payables getPayables(PayablesCreateRequest payablesCreateRequest) {
