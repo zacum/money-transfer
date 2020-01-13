@@ -38,11 +38,13 @@ public class Account {
     }
 
     public void addMoney(Money money) {
-        setMoney(money.add(Money.of(this.amount, this.currency)));
+        Money original = Money.of(this.amount, this.currency);
+        setMoney(original.add(money));
     }
 
     public void subtractMoney(Money money) {
-        setMoney(money.subtract(Money.of(this.amount, this.currency)));
+        Money original = Money.of(this.amount, this.currency);
+        setMoney(original.subtract(money));
     }
 
     public void setMoney(Money money) {
