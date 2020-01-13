@@ -25,16 +25,14 @@ public class TransactionResource {
                 if (payablesCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
-                transactionService.createPayables(payablesCreateRequest);
-                return "";
+                return transactionService.createPayables(payablesCreateRequest);
             });
             post("/receivables", (request, response) -> {
                 ReceivablesCreateRequest receivablesCreateRequest = gson.fromJson(request.body(), ReceivablesCreateRequest.class);
                 if (receivablesCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
-                transactionService.createReceivables(receivablesCreateRequest);
-                return "";
+                return transactionService.createReceivables(receivablesCreateRequest);
             });
             post("/transfers", (request, response) -> {
                 TransfersCreateRequest transfersCreateRequest = gson.fromJson(request.body(), TransfersCreateRequest.class);
@@ -44,8 +42,7 @@ public class TransactionResource {
                 if (transfersCreateRequest.getToAccountId().equals(transfersCreateRequest.getFromAccountId())) {
                     throw new IllegalTransactionAccountException("Cannot transfer money to and from the same account");
                 }
-                transactionService.createTransfers(transfersCreateRequest);
-                return "";
+                return transactionService.createTransfers(transfersCreateRequest);
             });
         });
     }

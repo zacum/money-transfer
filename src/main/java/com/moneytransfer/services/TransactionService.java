@@ -8,6 +8,7 @@ import com.moneytransfer.entities.Transfers;
 import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
+import com.moneytransfer.models.transaction.TransactionResponse;
 import com.moneytransfer.models.transaction.TransfersCreateRequest;
 import com.moneytransfer.repositories.AccountRepository;
 import com.moneytransfer.repositories.TransactionRepository;
@@ -21,25 +22,25 @@ public class TransactionService {
     @Inject
     private TransactionRepository transactionRepository;
 
-    public void createPayables(PayablesCreateRequest payablesCreateRequest) {
+    public TransactionResponse createPayables(PayablesCreateRequest payablesCreateRequest) {
         Payables payables = getPayables(payablesCreateRequest);
         Account accountFrom = getAccountOrThrowNotFound(payablesCreateRequest.getAccountId());
-        transactionRepository.save(payables, accountFrom);
+        return new TransactionResponse(transactionRepository.save(payables, accountFrom));
     }
 
-    public void createReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
+    public TransactionResponse createReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
         Receivables receivables = getReceivables(receivablesCreateRequest);
         Account accountTo = getAccountOrThrowNotFound(receivablesCreateRequest.getAccountId());
-        transactionRepository.save(receivables, accountTo);
+        return new TransactionResponse(transactionRepository.save(receivables, accountTo));
     }
 
-    public void createTransfers(TransfersCreateRequest transfersCreateRequest) {
+    public TransactionResponse createTransfers(TransfersCreateRequest transfersCreateRequest) {
         Transfers transfers = new Transfers();
         Account accountFrom = getAccountOrThrowNotFound(transfersCreateRequest.getFromAccountId());
         Account accountTo = getAccountOrThrowNotFound(transfersCreateRequest.getToAccountId());
         Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
         Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
-        transactionRepository.save(payables, receivables, transfers, accountFrom, accountTo);
+        return new TransactionResponse(transactionRepository.save(payables, receivables, transfers, accountFrom, accountTo));
     }
 
     private Account getAccountOrThrowNotFound(Long accountId) {
