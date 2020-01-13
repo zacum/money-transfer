@@ -17,24 +17,27 @@ public class AccountResource {
     private AccountService accountService;
 
     public void run() {
-        post("/account", (request, response) -> {
-            AccountCreateRequest accountCreateRequest = new Gson().fromJson(request.body(), AccountCreateRequest.class);
-            AccountResponse account = accountService.createAccount(accountCreateRequest);
-            response.status(201);
-            return new Gson().toJson(account);
-        });
-        get("/account", (request, response) -> {
-            // FIXME: This endpoint is for testing purposes only
-            // FIXME: The production version of it needs to implement pagination
-            return new Gson().toJson(accountService.getAccounts());
-        });
-        get("/account/:id", (request, response) -> {
-            Long accountId = getAccountId(request);
-            Optional<AccountResponse> accountOpt = accountService.getAccount(accountId);
-            if (accountOpt.isEmpty()) {
-                halt(404);
-            }
-            return new Gson().toJson(accountOpt.get());
+        Gson gson = new Gson();
+        path("/account", () -> {
+            post("", (request, response) -> {
+                AccountCreateRequest accountCreateRequest = new Gson().fromJson(request.body(), AccountCreateRequest.class);
+                AccountResponse account = accountService.createAccount(accountCreateRequest);
+                response.status(201);
+                return account;
+            }, gson::toJson);
+            get("", (request, response) -> {
+                // FIXME: This endpoint is for testing purposes only
+                // FIXME: The production version of it needs to implement pagination
+                return accountService.getAccounts();
+            }, gson::toJson);
+            get("/:id", (request, response) -> {
+                Long accountId = getAccountId(request);
+                Optional<AccountResponse> accountOpt = accountService.getAccount(accountId);
+                if (accountOpt.isEmpty()) {
+                    halt(404);
+                }
+                return accountOpt.get();
+            }, gson::toJson);
         });
     }
 

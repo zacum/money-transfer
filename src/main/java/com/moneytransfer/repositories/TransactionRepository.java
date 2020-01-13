@@ -43,7 +43,7 @@ public class TransactionRepository {
         }
     }
 
-    public void save(Receivables receivables, Payables payables) {
+    public void save(Payables payables, Receivables receivables) {
         Transaction transaction = database.startTransaction();
         try {
             Query transactionQuery = database.transaction(transaction);
@@ -80,26 +80,26 @@ public class TransactionRepository {
     }
 
     private Account getAccount(Receivables receivables, Query transactionQuery) {
-        List<Account> accountsTo = transactionQuery.table("account").where("id=?", receivables.getAccountId()).results(Account.class);
-        if (accountsTo.size() != 1) {
+        List<Account> accounts = transactionQuery.table("account").where("id=?", receivables.getAccountId()).results(Account.class);
+        if (accounts.size() != 1) {
             throw new IllegalTransactionAccountException("Account " + receivables.getAccountId() + " not fount");
         }
-        Account accountTo = accountsTo.stream().findFirst().orElseThrow();
-        accountTo.addMoney(Money.of(receivables.getAmount(), receivables.getCurrency()));
-        return accountTo;
+        Account account = accounts.stream().findFirst().orElseThrow();
+        account.addMoney(Money.of(receivables.getAmount(), receivables.getCurrency()));
+        return account;
     }
 
     private Account getAccount(Payables payables, Query transactionQuery) {
-        List<Account> accountsFrom = transactionQuery.table("account").where("id=?", payables.getAccountId()).results(Account.class);
-        if (accountsFrom.size() != 1) {
+        List<Account> accounts = transactionQuery.table("account").where("id=?", payables.getAccountId()).results(Account.class);
+        if (accounts.size() != 1) {
             throw new IllegalTransactionAccountException("Account " + payables.getAccountId() + " not fount");
         }
-        Account accountFrom = accountsFrom.stream().findFirst().orElseThrow();
-        accountFrom.subtractMoney(Money.of(payables.getAmount(), payables.getCurrency()));
-        if (accountFrom.getAmount().signum() < 0) {
+        Account account = accounts.stream().findFirst().orElseThrow();
+        account.subtractMoney(Money.of(payables.getAmount(), payables.getCurrency()));
+        if (account.getAmount().signum() < 0) {
             throw new IllegalTransactionBalanceException("Account " + payables.getAccountId() + " does not have sufficient funds");
         }
-        return accountFrom;
+        return account;
     }
 
 }

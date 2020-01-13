@@ -3,10 +3,9 @@ package com.moneytransfer.services;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
-import com.moneytransfer.exceptions.IllegalTransactionAccountException;
-import com.moneytransfer.exceptions.IllegalTransactionOperationTypeException;
-import com.moneytransfer.models.transaction.OperationType;
-import com.moneytransfer.models.transaction.TransactionCreateRequest;
+import com.moneytransfer.models.transaction.PayablesCreateRequest;
+import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
+import com.moneytransfer.models.transaction.TransfersCreateRequest;
 import com.moneytransfer.repositories.AccountRepository;
 import com.moneytransfer.repositories.TransactionRepository;
 import org.javamoney.moneta.Money;
@@ -19,44 +18,32 @@ public class TransactionService {
     @Inject
     private TransactionRepository transactionRepository;
 
-    public void transferMoney(TransactionCreateRequest transactionCreateRequest) {
-        OperationType operation = transactionCreateRequest.getOperation();
-        if (operation == OperationType.DEPOSIT) {
-            transactionRepository.save(getDepositTransaction(transactionCreateRequest));
-        } else if (operation == OperationType.WITHDRAW) {
-            transactionRepository.save(getWithdrawTransaction(transactionCreateRequest));
-        } else if (operation == OperationType.TRANSFER) {
-            Receivables depositTransaction = getDepositTransaction(transactionCreateRequest);
-            Payables withdrawTransaction = getWithdrawTransaction(transactionCreateRequest);
-            if (transactionCreateRequest.getToAccountId().equals(transactionCreateRequest.getFromAccountId())) {
-                throw new IllegalTransactionAccountException("Cannot transfer money to and from the same account");
-            }
-            transactionRepository.save(depositTransaction, withdrawTransaction);
-        } else {
-            throw new IllegalTransactionOperationTypeException("Operation Type " + operation + " is not supported");
-        }
+    public void savePayables(PayablesCreateRequest payablesCreateRequest) {
+        transactionRepository.save(getPayables(payablesCreateRequest));
     }
 
-    private Receivables getDepositTransaction(TransactionCreateRequest transactionCreateRequest) {
-        if (transactionCreateRequest.getToAccountId() == null) {
-            throw new IllegalTransactionAccountException("Receiving account id is required for DEPOSIT operation");
-        }
+    private Payables getPayables(PayablesCreateRequest payablesCreateRequest) {
+        Payables payables = new Payables();
+        payables.setAccountId(payablesCreateRequest.getAccountId());
+        payables.setMoney(Money.of(payablesCreateRequest.getAmount(), payablesCreateRequest.getCurrency()));
+        return payables;
+    }
 
+    public void saveReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
+        transactionRepository.save(getReceivables(receivablesCreateRequest));
+    }
+
+    private Receivables getReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
         Receivables receivables = new Receivables();
-        receivables.setAccountId(transactionCreateRequest.getToAccountId());
-        receivables.setMoney(Money.of(transactionCreateRequest.getAmount(), transactionCreateRequest.getCurrency()));
+        receivables.setAccountId(receivablesCreateRequest.getAccountId());
+        receivables.setMoney(Money.of(receivablesCreateRequest.getAmount(), receivablesCreateRequest.getCurrency()));
         return receivables;
     }
 
-    private Payables getWithdrawTransaction(TransactionCreateRequest transactionCreateRequest) {
-        if (transactionCreateRequest.getFromAccountId() == null) {
-            throw new IllegalTransactionAccountException("Paying account id is required for WITHDRAW operation");
-        }
-
-        Payables payables = new Payables();
-        payables.setAccountId(transactionCreateRequest.getFromAccountId());
-        payables.setMoney(Money.of(transactionCreateRequest.getAmount(), transactionCreateRequest.getCurrency()));
-        return payables;
+    public void saveTransfers(TransfersCreateRequest transfersCreateRequest) {
+        Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
+        Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
+        transactionRepository.save(payables, receivables);
     }
 
 }

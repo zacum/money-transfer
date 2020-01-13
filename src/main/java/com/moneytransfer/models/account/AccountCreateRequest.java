@@ -2,24 +2,16 @@ package com.moneytransfer.models.account;
 
 public class AccountCreateRequest {
 
-    private String name;
+    private String name = "";
 
-    private String currency;
+    private String currency = "";
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCurrency() {
         return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     @Override
