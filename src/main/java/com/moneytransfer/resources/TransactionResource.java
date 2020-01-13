@@ -26,14 +26,14 @@ public class TransactionResource {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
                 return transactionService.createPayables(payablesCreateRequest);
-            });
+            }, gson::toJson);
             post("/receivables", (request, response) -> {
                 ReceivablesCreateRequest receivablesCreateRequest = gson.fromJson(request.body(), ReceivablesCreateRequest.class);
                 if (receivablesCreateRequest.getAmount().signum() < 0) {
                     throw new IllegalTransactionNegativeAmountException("Amount cannot be negative");
                 }
                 return transactionService.createReceivables(receivablesCreateRequest);
-            });
+            }, gson::toJson);
             post("/transfers", (request, response) -> {
                 TransfersCreateRequest transfersCreateRequest = gson.fromJson(request.body(), TransfersCreateRequest.class);
                 if (transfersCreateRequest.getAmount().signum() < 0) {
@@ -43,7 +43,7 @@ public class TransactionResource {
                     throw new IllegalTransactionAccountException("Cannot transfer money to and from the same account");
                 }
                 return transactionService.createTransfers(transfersCreateRequest);
-            });
+            }, gson::toJson);
         });
     }
 
