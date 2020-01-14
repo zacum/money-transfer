@@ -14,10 +14,12 @@ import static spark.Spark.*;
 public class TransactionResource {
 
     @Inject
+    private Gson gson;
+
+    @Inject
     private TransactionService transactionService;
 
     public void run() {
-        Gson gson = new Gson();
         path("/transaction", () -> {
             before("/*", ((request, response) -> response.status(201)));
             post("/payables", (request, response) -> {

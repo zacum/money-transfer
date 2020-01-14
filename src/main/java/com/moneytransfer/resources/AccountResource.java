@@ -15,10 +15,12 @@ import static spark.Spark.*;
 public class AccountResource {
 
     @Inject
+    private Gson gson;
+
+    @Inject
     private AccountService accountService;
 
     public void run() {
-        Gson gson = new Gson();
         path("/account", () -> {
             post("", (request, response) -> {
                 AccountCreateRequest accountCreateRequest = gson.fromJson(request.body(), AccountCreateRequest.class);
