@@ -21,7 +21,7 @@ public class TransactionRepository {
     public Payables save(Payables payables) {
         Transaction transaction = database.startTransaction();
         try {
-            Account account = getAccountOrThrowNotFound(payables.getAccountId(), transaction);
+            Account account = withdraw(payables, transaction);
             payables = savePayables(payables, transaction, account);
             transaction.commit();
         } catch (Throwable t) {
@@ -34,7 +34,7 @@ public class TransactionRepository {
     public Receivables save(Receivables receivables) {
         Transaction transaction = database.startTransaction();
         try {
-            Account account = getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
+            Account account = deposit(receivables, transaction);
             receivables = saveReceivables(receivables, transaction, account);
             transaction.commit();
         } catch (Throwable t) {
@@ -47,8 +47,8 @@ public class TransactionRepository {
     public Transfers save(Payables payables, Receivables receivables, Transfers transfers) {
         Transaction transaction = database.startTransaction();
         try {
-            Account accountFrom = getAccountOrThrowNotFound(payables.getAccountId(), transaction);
-            Account accountTo = getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
+            Account accountFrom = withdraw(payables, transaction);
+            Account accountTo = deposit(receivables, transaction);
             payables = savePayables(payables, transaction, accountFrom);
             receivables = saveReceivables(receivables, transaction, accountTo);
             transfers.setPayablesId(payables.getId());
@@ -62,7 +62,19 @@ public class TransactionRepository {
         return transfers;
     }
 
-    private Payables savePayables(Payables payables, Transaction transaction, Account account) {
+    private Account deposit(Receivables receivables, Transaction transaction) {
+        Account account = getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
+        Money original = Money.of(account.getAmount(), account.getCurrency());
+        Money modification = Money.of(receivables.getAmount(), receivables.getCurrency());
+        if (!receivables.getCurrency().equals(account.getCurrency())) {
+            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
+        }
+        account.setMoney(original.add(modification));
+        return account;
+    }
+
+    private Account withdraw(Payables payables, Transaction transaction) {
+        Account account = getAccountOrThrowNotFound(payables.getAccountId(), transaction);
         Money original = Money.of(account.getAmount(), account.getCurrency());
         Money modification = Money.of(payables.getAmount(), payables.getCurrency());
         if (!payables.getCurrency().equals(account.getCurrency())) {
@@ -72,6 +84,21 @@ public class TransactionRepository {
         if (account.getAmount().signum() < 0) {
             throw new IllegalTransactionBalanceException("Paying account does not have sufficient funds");
         }
+        return account;
+    }
+
+    private Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
+        return database
+                .transaction(transaction)
+                .table("account")
+                .where("id=?", accountId)
+                .results(Account.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
+    }
+
+    private Payables savePayables(Payables payables, Transaction transaction, Account account) {
         database
                 .transaction(transaction)
                 .table("account")
@@ -85,12 +112,6 @@ public class TransactionRepository {
     }
 
     private Receivables saveReceivables(Receivables receivables, Transaction transaction, Account account) {
-        Money original = Money.of(account.getAmount(), account.getCurrency());
-        Money modification = Money.of(receivables.getAmount(), receivables.getCurrency());
-        if (!receivables.getCurrency().equals(account.getCurrency())) {
-            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
-        }
-        account.setMoney(original.add(modification));
         database
                 .transaction(transaction)
                 .table("account")
@@ -110,17 +131,6 @@ public class TransactionRepository {
                 .generatedKeyReceiver(transfers, "id")
                 .insert(transfers);
         return transfers;
-    }
-
-    private Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
-        return database
-                .transaction(transaction)
-                .table("account")
-                .where("id=?", accountId)
-                .results(Account.class)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
     }
 
 }
