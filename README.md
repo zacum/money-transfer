@@ -60,7 +60,7 @@ The following ERM diagram illustrates the entities and their relationships.
 
 ## REST API
 
-Postman Collection for Money Transfer REST API: ![Postman Collection for Money Transfer REST API](docs/Money_Transfer_API.postman_collection.json)
+[Postman Collection for Money Transfer REST API](docs/Money_Transfer_API.postman_collection.json)
 
 ### Account
 
