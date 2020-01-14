@@ -55,6 +55,8 @@ Transfers occur only as a result of transferring money from one account to anoth
 
 # REST API
 
+![Postman Collection for Money Transfer REST API](docs/Money_Transfer_API.postman_collection.json)
+
 ## Account
 
 | **Method** | **Path**          | **Intention**         |
