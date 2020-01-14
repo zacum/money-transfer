@@ -46,6 +46,24 @@ public class TransactionResource {
                 }
                 return transactionService.createTransfers(transfersCreateRequest);
             }, gson::toJson);
+            get("/payables", (request, response) -> {
+                // FIXME: This endpoint is for testing purposes only
+                // FIXME: The production version of it needs to implement pagination, filtering, etc.
+                response.status(200);
+                return transactionService.getPayables();
+            }, gson::toJson);
+            get("/receivables", (request, response) -> {
+                // FIXME: This endpoint is for testing purposes only
+                // FIXME: The production version of it needs to implement pagination, filtering, etc.
+                response.status(200);
+                return transactionService.getReceivables();
+            }, gson::toJson);
+            get("/transfers", (request, response) -> {
+                // FIXME: This endpoint is for testing purposes only
+                // FIXME: The production version of it needs to implement pagination, filtering, etc.
+                response.status(200);
+                return transactionService.getTransfers();
+            }, gson::toJson);
         });
     }
 

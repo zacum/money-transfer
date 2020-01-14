@@ -11,6 +11,10 @@ import com.moneytransfer.models.transaction.TransfersCreateRequest;
 import com.moneytransfer.repositories.TransactionRepository;
 import org.javamoney.moneta.Money;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 public class TransactionService {
 
     @Inject
@@ -45,6 +49,28 @@ public class TransactionService {
         receivables.setAccountId(receivablesCreateRequest.getAccountId());
         receivables.setMoney(Money.of(receivablesCreateRequest.getAmount(), receivablesCreateRequest.getCurrency()));
         return receivables;
+    }
+
+    public List<TransactionResponse> getPayables() {
+        return transactionRepository.getPayables().stream()
+                .map(TransactionResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<TransactionResponse> getReceivables() {
+        return transactionRepository.getReceivables().stream()
+                .map(TransactionResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<TransactionResponse> getTransfers() {
+        return transactionRepository.getTransfers().stream()
+                .map(transfers -> {
+                    Optional<Payables> payables = transactionRepository.getPayables(transfers.getPayablesId());
+                    Optional<Receivables> receivables = transactionRepository.getReceivables(transfers.getReceivablesId());
+                    return new TransactionResponse(payables.get(), receivables.get(), transfers);
+                })
+                .collect(Collectors.toList());
     }
 
 }

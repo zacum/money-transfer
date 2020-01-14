@@ -12,6 +12,8 @@ import com.moneytransfer.exceptions.IllegalTransactionBalanceException;
 import org.javamoney.moneta.Money;
 
 import javax.money.convert.MonetaryConversions;
+import java.util.List;
+import java.util.Optional;
 
 public class TransactionRepository {
 
@@ -131,6 +133,45 @@ public class TransactionRepository {
                 .generatedKeyReceiver(transfers, "id")
                 .insert(transfers);
         return transfers;
+    }
+
+    public List<Payables> getPayables() {
+        return database
+                .table("payables")
+                .orderBy("id")
+                .results(Payables.class);
+    }
+
+    public List<Receivables> getReceivables() {
+        return database
+                .table("receivables")
+                .orderBy("id")
+                .results(Receivables.class);
+    }
+
+    public List<Transfers> getTransfers() {
+        return database
+                .table("transfers")
+                .orderBy("id")
+                .results(Transfers.class);
+    }
+
+    public Optional<Payables> getPayables(Long payablesId) {
+        return database
+                .table("payables")
+                .where("id=?", payablesId)
+                .results(Payables.class)
+                .stream()
+                .findFirst();
+    }
+
+    public Optional<Receivables> getReceivables(Long receivablesId) {
+        return database
+                .table("receivables")
+                .where("id=?", receivablesId)
+                .results(Receivables.class)
+                .stream()
+                .findFirst();
     }
 
 }

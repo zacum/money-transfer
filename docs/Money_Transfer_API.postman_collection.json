@@ -54,7 +54,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"account_id\": 1,\n\t\"amount\": 1.0,\n\t\"currency\": \"EUR\"\n}\n",
+					"raw": "{\n\t\"account_id\": 1,\n\t\"amount\": 2.0,\n\t\"currency\": \"EUR\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -172,6 +172,66 @@
 						}
 					}
 				},
+				"url": {
+					"raw": "http://localhost:4567/transaction/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4567",
+					"path": [
+						"transaction",
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payables",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4567/transaction/payables",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4567",
+					"path": [
+						"transaction",
+						"payables"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Receivables",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4567/transaction/receivables",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4567",
+					"path": [
+						"transaction",
+						"receivables"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Transfers",
+			"request": {
+				"method": "GET",
+				"header": [],
 				"url": {
 					"raw": "http://localhost:4567/transaction/transfers",
 					"protocol": "http",

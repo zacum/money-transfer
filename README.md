@@ -72,3 +72,6 @@ Transfers occur only as a result of transferring money from one account to anoth
 | POST       | /transaction/payables    | Withdraw the money from an account      |
 | POST       | /transaction/receivables | Deposit the money from an account       |
 | POST       | /transaction/transfers   | Transfer the money between two accounts |
+| GET        | /transaction/payables    | List all payables                       |
+| GET        | /transaction/receivables | List all receivables                    |
+| GET        | /transaction/transfers   | List all transfers                      |
