@@ -26,18 +26,6 @@ The following project is a simple REST API for money transferring between accoun
 * [SLF4J](http://www.slf4j.org/)
 * [JUnit 4](https://junit.org/junit4/)
 
-## Build
-
-```shell script
-mvn clean install
-```
-
-## Run
-
-```shell script
-java -jar target/moneytransfer-0.1-jar-with-dependencies.jar
-```
-
 ## Data Model
 The data model is designed around two entities: **accounts** and **transactions**.
 
@@ -81,3 +69,15 @@ The following ERM diagram illustrates the entities and their relationships.
 | GET        | /transaction/payables    | List all payables                       |
 | GET        | /transaction/receivables | List all receivables                    |
 | GET        | /transaction/transfers   | List all transfers                      |
+
+## Build
+
+```shell script
+mvn clean install
+```
+
+## Run
+
+```shell script
+java -jar target/moneytransfer-0.1-jar-with-dependencies.jar
+```
