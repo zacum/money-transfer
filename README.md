@@ -7,7 +7,6 @@ The following project is a simple REST API for money transferring between accoun
 * Money modifications happen synchronously for the sake of testing. In production version the communication would become asynchronous given the high rate of transaction operations. The endpoint would product a Kafka message to the topic, which would have a number of consumers for processing the message.
 * All money related operations, including the currency conversion are performed by **moneta**. The currency conversion works only if the **ECB** provider or it's substitute is accessible over the network.
 * Endpoints for listing the entities exists for testing purposes only. The production version would include pagination, filtering, etc.
-* The production version would also include Swagger.
 
 ## Requirements
 
@@ -29,13 +28,13 @@ The following project is a simple REST API for money transferring between accoun
 
 ## Build
 
-```maven
+```shell script
 mvn clean install
 ```
 
 ## Run
 
-```maven
+```shell script
 java -jar target/moneytransfer-0.1-jar-with-dependencies.jar
 ```
 
@@ -61,6 +60,8 @@ The following ERM diagram illustrates the entities and their relationships.
 ## REST API
 
 [Postman Collection for Money Transfer REST API](docs/Money_Transfer_API.postman_collection.json)
+
+[Swagger API Documentation](https://moneytransferapi2.docs.apiary.io/#)
 
 ### Account
 
