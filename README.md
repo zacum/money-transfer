@@ -81,3 +81,5 @@ mvn clean install
 ```shell script
 java -jar target/moneytransfer-0.1-jar-with-dependencies.jar
 ```
+
+The server is running on: http://localhost:4567/
