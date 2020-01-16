@@ -25,6 +25,7 @@ The following project is a simple REST API for money transferring between accoun
 * [Norm](https://github.com/dieselpoint/norm)
 * [SLF4J](http://www.slf4j.org/)
 * [JUnit 4](https://junit.org/junit4/)
+* [Mockito](https://site.mockito.org/)
 
 ## Data Model
 The data model is designed around two entities: **accounts** and **transactions**.
