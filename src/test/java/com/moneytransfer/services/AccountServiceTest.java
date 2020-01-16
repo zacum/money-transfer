@@ -39,8 +39,8 @@ public class AccountServiceTest {
     @Test
     public void testCreateAccountSuccessfully() {
         String accountName = "Victor Account";
-        String accountCurrency = "EUR";
         BigDecimal accountAmount = BigDecimal.valueOf(0.0);
+        String accountCurrency = "EUR";
 
         AccountCreateRequest accountCreateRequest = new AccountCreateRequest();
         accountCreateRequest.setName(accountName);
@@ -87,8 +87,8 @@ public class AccountServiceTest {
     @Test
     public void testListAccountsSuccessful() {
         String accountName = "Victor Account";
-        String accountCurrency = "EUR";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
 
         Account accountSaved = new Account();
         accountSaved.setId(1L);
@@ -115,8 +115,8 @@ public class AccountServiceTest {
     @Test
     public void testGetAccountSuccessfully() {
         String accountName = "Victor Account";
-        String accountCurrency = "EUR";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
 
         Account accountSaved = new Account();
         accountSaved.setId(1L);

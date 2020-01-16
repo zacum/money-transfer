@@ -64,11 +64,11 @@ public class Payables {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Payables)) return false;
-        Payables that = (Payables) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(accountId, that.accountId) &&
-                Objects.equal(amount, that.amount) &&
-                Objects.equal(currency, that.currency);
+        Payables payables = (Payables) o;
+        return Objects.equal(id, payables.id) &&
+                Objects.equal(accountId, payables.accountId) &&
+                Objects.equal(amount, payables.amount) &&
+                Objects.equal(currency, payables.currency);
     }
 
     @Override

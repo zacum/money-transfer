@@ -62,14 +62,16 @@ public class Account {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account)) return false;
-        Account that = (Account) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(name, that.name);
+        Account account = (Account) o;
+        return Objects.equal(id, account.id) &&
+                Objects.equal(name, account.name) &&
+                Objects.equal(amount, account.amount) &&
+                Objects.equal(currency, account.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name);
+        return Objects.hashCode(id, name, amount, currency);
     }
 
     @Override
