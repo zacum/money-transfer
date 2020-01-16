@@ -15,6 +15,9 @@ public class AccountResponse {
 
     private String currency;
 
+    public AccountResponse() {
+    }
+
     public AccountResponse(Account account) {
         Money money = Money.of(account.getAmount(), account.getCurrency());
         this.id = account.getId();
@@ -57,7 +60,7 @@ public class AccountResponse {
 
     @Override
     public String toString() {
-        return "AccountCreateResponse{" +
+        return "AccountResponse{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", amount='" + amount + '\'' +

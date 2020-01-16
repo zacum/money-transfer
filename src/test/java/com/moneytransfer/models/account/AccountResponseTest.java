@@ -16,7 +16,25 @@ public class AccountResponseTest {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void testAccountResponseConstructor() {
+    public void testAccountResponseDefaultConstructor() {
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
+
+        AccountResponse accountResponse = new AccountResponse();
+        accountResponse.setId(1L);
+        accountResponse.setName(accountName);
+        accountResponse.setAmount(accountAmount);
+        accountResponse.setCurrency(accountCurrency);
+
+        assertEquals(1L, (long) accountResponse.getId());
+        assertEquals(accountName, accountResponse.getName());
+        assertEquals(accountAmount, accountResponse.getAmount());
+        assertEquals(accountCurrency, accountResponse.getCurrency());
+    }
+
+    @Test
+    public void testAccountResponseAccountConstructor() {
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";
@@ -27,12 +45,12 @@ public class AccountResponseTest {
         accountSaved.setAmount(accountAmount);
         accountSaved.setCurrency(accountCurrency);
 
-        AccountResponse accountCreateRequest = new AccountResponse(accountSaved);
+        AccountResponse accountResponse = new AccountResponse(accountSaved);
 
-        assertEquals(1L, (long) accountCreateRequest.getId());
-        assertEquals(accountName, accountCreateRequest.getName());
-        assertEquals(accountAmount, accountCreateRequest.getAmount());
-        assertEquals(accountCurrency, accountCreateRequest.getCurrency());
+        assertEquals(1L, (long) accountResponse.getId());
+        assertEquals(accountName, accountResponse.getName());
+        assertEquals(accountAmount, accountResponse.getAmount());
+        assertEquals(accountCurrency, accountResponse.getCurrency());
     }
 
     @Test
