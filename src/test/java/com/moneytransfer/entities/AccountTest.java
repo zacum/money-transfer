@@ -10,7 +10,7 @@ import static junit.framework.TestCase.assertEquals;
 public class AccountTest {
 
     @Test
-    public void testAccountConstructor() {
+    public void testAccountDefaultConstructor() {
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";

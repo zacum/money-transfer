@@ -14,8 +14,16 @@ public class TransfersCreateRequest extends TransactionCreateRequest {
         return fromAccountId;
     }
 
+    public void setFromAccountId(Long fromAccountId) {
+        this.fromAccountId = fromAccountId;
+    }
+
     public Long getToAccountId() {
         return toAccountId;
+    }
+
+    public void setToAccountId(Long toAccountId) {
+        this.toAccountId = toAccountId;
     }
 
     @Override

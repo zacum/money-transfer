@@ -7,7 +7,7 @@ import static junit.framework.TestCase.assertEquals;
 public class TransfersTest {
 
     @Test
-    public void testTransfersConstructor() {
+    public void testTransfersDefaultConstructor() {
         Long transfersPayablesId = 2L;
         Long transfersReceivablesId = 2L;
 

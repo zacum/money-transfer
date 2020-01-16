@@ -7,7 +7,7 @@ import static junit.framework.TestCase.assertEquals;
 public class AccountCreateRequestTest {
 
     @Test
-    public void testAccountCreateRequestConstructor() {
+    public void testAccountCreateRequestDefaultConstructor() {
         String accountName = "Victor Account";
         String accountCurrency = "EUR";
 
@@ -18,4 +18,5 @@ public class AccountCreateRequestTest {
         assertEquals(accountName, accountCreateRequest.getName());
         assertEquals(accountCurrency, accountCreateRequest.getCurrency());
     }
+
 }

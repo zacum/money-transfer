@@ -10,7 +10,7 @@ import static junit.framework.TestCase.assertEquals;
 public class PayablesTest {
 
     @Test
-    public void testPayablesConstructor() {
+    public void testPayablesDefaultConstructor() {
         Long payablesAccountId = 2L;
         BigDecimal payablesAmount = BigDecimal.valueOf(10.50);
         String payablesCurrency = "EUR";

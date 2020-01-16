@@ -7,6 +7,9 @@ public class PayablesCreateRequest extends TransactionCreateRequest {
     @SerializedName("account_id")
     private Long accountId = 0L;
 
+    public PayablesCreateRequest() {
+    }
+
     public PayablesCreateRequest(TransfersCreateRequest transfersCreateRequest) {
         accountId = transfersCreateRequest.getFromAccountId();
         amount = transfersCreateRequest.getAmount();
@@ -15,6 +18,10 @@ public class PayablesCreateRequest extends TransactionCreateRequest {
 
     public Long getAccountId() {
         return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     @Override
