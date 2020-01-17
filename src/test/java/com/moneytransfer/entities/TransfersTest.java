@@ -8,17 +8,18 @@ public class TransfersTest {
 
     @Test
     public void testTransfersDefaultConstructor() {
-        Long transfersPayablesId = 2L;
-        Long transfersReceivablesId = 2L;
+        Long id = 1L;
+        Long payablesId = 2L;
+        Long receivablesId = 3L;
 
         Transfers transfers = new Transfers();
-        transfers.setId(1L);
-        transfers.setPayablesId(transfersPayablesId);
-        transfers.setReceivablesId(transfersReceivablesId);
+        transfers.setId(id);
+        transfers.setPayablesId(payablesId);
+        transfers.setReceivablesId(receivablesId);
 
-        assertEquals(1, (long) transfers.getId());
-        assertEquals(transfersPayablesId, transfers.getPayablesId());
-        assertEquals(transfersReceivablesId, transfers.getReceivablesId());
+        assertEquals(id, transfers.getId());
+        assertEquals(payablesId, transfers.getPayablesId());
+        assertEquals(receivablesId, transfers.getReceivablesId());
     }
 
 }

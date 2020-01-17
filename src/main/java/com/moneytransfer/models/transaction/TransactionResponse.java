@@ -28,6 +28,9 @@ public class TransactionResponse {
 
     private String currency;
 
+    public TransactionResponse() {
+    }
+
     public TransactionResponse(Payables payables) {
         Money money = Money.of(payables.getAmount(), payables.getCurrency());
         this.id = payables.getId();
@@ -55,10 +58,70 @@ public class TransactionResponse {
         this.currency = money.getCurrency().getCurrencyCode();
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getFromAccountId() {
+        return fromAccountId;
+    }
+
+    public void setFromAccountId(Long fromAccountId) {
+        this.fromAccountId = fromAccountId;
+    }
+
+    public Long getToAccountId() {
+        return toAccountId;
+    }
+
+    public void setToAccountId(Long toAccountId) {
+        this.toAccountId = toAccountId;
+    }
+
+    public Long getPayablesId() {
+        return payablesId;
+    }
+
+    public void setPayablesId(Long payablesId) {
+        this.payablesId = payablesId;
+    }
+
+    public Long getReceivablesId() {
+        return receivablesId;
+    }
+
+    public void setReceivablesId(Long receivablesId) {
+        this.receivablesId = receivablesId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     @Override
     public String toString() {
-        return "TransactionResonse{" +
+        return "TransactionResponse{" +
                 "id=" + id +
+                ", fromAccountId=" + fromAccountId +
+                ", toAccountId=" + toAccountId +
+                ", payablesId=" + payablesId +
+                ", receivablesId=" + receivablesId +
                 ", amount=" + amount +
                 ", currency='" + currency + '\'' +
                 '}';

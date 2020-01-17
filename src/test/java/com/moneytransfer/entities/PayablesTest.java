@@ -11,37 +11,39 @@ public class PayablesTest {
 
     @Test
     public void testPayablesDefaultConstructor() {
-        Long payablesAccountId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(10.50);
-        String payablesCurrency = "EUR";
+        Long id = 1L;
+        Long accountId = 2L;
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Payables payables = new Payables();
-        payables.setId(1L);
-        payables.setAccountId(payablesAccountId);
-        payables.setAmount(payablesAmount);
-        payables.setCurrency(payablesCurrency);
+        payables.setId(id);
+        payables.setAccountId(accountId);
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
-        assertEquals(1, (long) payables.getId());
-        assertEquals(payablesAccountId, payables.getAccountId());
-        assertEquals(payablesAmount, payables.getAmount());
-        assertEquals(payablesCurrency, payables.getCurrency());
+        assertEquals(id, payables.getId());
+        assertEquals(accountId, payables.getAccountId());
+        assertEquals(amount, payables.getAmount());
+        assertEquals(currency, payables.getCurrency());
     }
 
     @Test
     public void testPayablesConstructorWithMoney() {
-        Long payablesAccountId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(10.50);
-        String payablesCurrency = "EUR";
+        Long id = 1L;
+        Long accountId = 2L;
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Payables payables = new Payables();
-        payables.setId(1L);
-        payables.setAccountId(payablesAccountId);
-        payables.setMoney(Money.of(payablesAmount, payablesCurrency));
+        payables.setId(id);
+        payables.setAccountId(accountId);
+        payables.setMoney(Money.of(amount, currency));
 
-        assertEquals(1, (long) payables.getId());
-        assertEquals(payablesAccountId, payables.getAccountId());
-        assertEquals(payablesAmount, payables.getAmount());
-        assertEquals(payablesCurrency, payables.getCurrency());
+        assertEquals(id, payables.getId());
+        assertEquals(accountId, payables.getAccountId());
+        assertEquals(amount, payables.getAmount());
+        assertEquals(currency, payables.getCurrency());
     }
 
 }

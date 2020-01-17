@@ -11,37 +11,39 @@ public class AccountTest {
 
     @Test
     public void testAccountDefaultConstructor() {
-        String accountName = "Victor Account";
-        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
-        String accountCurrency = "EUR";
+        Long id = 1L;
+        String name = "Victor Account";
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Account account = new Account();
-        account.setId(1L);
-        account.setName(accountName);
-        account.setAmount(accountAmount);
-        account.setCurrency(accountCurrency);
+        account.setId(id);
+        account.setName(name);
+        account.setAmount(amount);
+        account.setCurrency(currency);
 
-        assertEquals(1, (long) account.getId());
-        assertEquals(accountName, account.getName());
-        assertEquals(accountAmount, account.getAmount());
-        assertEquals(accountCurrency, account.getCurrency());
+        assertEquals(id, account.getId());
+        assertEquals(name, account.getName());
+        assertEquals(amount, account.getAmount());
+        assertEquals(currency, account.getCurrency());
     }
 
     @Test
     public void testAccountConstructorWithMoney() {
-        String accountName = "Victor Account";
-        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
-        String accountCurrency = "EUR";
+        Long id = 1L;
+        String name = "Victor Account";
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Account account = new Account();
-        account.setId(1L);
-        account.setName(accountName);
-        account.setMoney(Money.of(accountAmount, accountCurrency));
+        account.setId(id);
+        account.setName(name);
+        account.setMoney(Money.of(amount, currency));
 
-        assertEquals(1, (long) account.getId());
-        assertEquals(accountName, account.getName());
-        assertEquals(accountAmount, account.getAmount());
-        assertEquals(accountCurrency, account.getCurrency());
+        assertEquals(id, account.getId());
+        assertEquals(name, account.getName());
+        assertEquals(amount, account.getAmount());
+        assertEquals(currency, account.getCurrency());
     }
 
 }

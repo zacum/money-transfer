@@ -10,38 +10,40 @@ import static junit.framework.TestCase.assertEquals;
 public class ReceivablesTest {
 
     @Test
-    public void testPayablesDefaultConstructor() {
-        Long payablesAccountId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(10.50);
-        String payablesCurrency = "EUR";
+    public void testReceivablesDefaultConstructor() {
+        Long id = 1L;
+        Long accountId = 2L;
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Receivables receivables = new Receivables();
-        receivables.setId(1L);
-        receivables.setAccountId(payablesAccountId);
-        receivables.setAmount(payablesAmount);
-        receivables.setCurrency(payablesCurrency);
+        receivables.setId(id);
+        receivables.setAccountId(accountId);
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
-        assertEquals(1, (long) receivables.getId());
-        assertEquals(payablesAccountId, receivables.getAccountId());
-        assertEquals(payablesAmount, receivables.getAmount());
-        assertEquals(payablesCurrency, receivables.getCurrency());
+        assertEquals(id, receivables.getId());
+        assertEquals(accountId, receivables.getAccountId());
+        assertEquals(amount, receivables.getAmount());
+        assertEquals(currency, receivables.getCurrency());
     }
 
     @Test
-    public void testPayablesConstructorWithMoney() {
-        Long payablesAccountId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(10.50);
-        String payablesCurrency = "EUR";
+    public void testReceivablesConstructorWithMoney() {
+        Long id = 1L;
+        Long accountId = 2L;
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
 
         Receivables receivables = new Receivables();
-        receivables.setId(1L);
-        receivables.setAccountId(payablesAccountId);
-        receivables.setMoney(Money.of(payablesAmount, payablesCurrency));
+        receivables.setId(id);
+        receivables.setAccountId(accountId);
+        receivables.setMoney(Money.of(amount, currency));
 
-        assertEquals(1, (long) receivables.getId());
-        assertEquals(payablesAccountId, receivables.getAccountId());
-        assertEquals(payablesAmount, receivables.getAmount());
-        assertEquals(payablesCurrency, receivables.getCurrency());
+        assertEquals(id, receivables.getId());
+        assertEquals(accountId, receivables.getAccountId());
+        assertEquals(amount, receivables.getAmount());
+        assertEquals(currency, receivables.getCurrency());
     }
 
 }

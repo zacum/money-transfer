@@ -17,17 +17,18 @@ public class AccountResponseTest {
 
     @Test
     public void testAccountResponseDefaultConstructor() {
+        Long id = 1L;
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";
 
         AccountResponse accountResponse = new AccountResponse();
-        accountResponse.setId(1L);
+        accountResponse.setId(id);
         accountResponse.setName(accountName);
         accountResponse.setAmount(accountAmount);
         accountResponse.setCurrency(accountCurrency);
 
-        assertEquals(1L, (long) accountResponse.getId());
+        assertEquals(id, accountResponse.getId());
         assertEquals(accountName, accountResponse.getName());
         assertEquals(accountAmount, accountResponse.getAmount());
         assertEquals(accountCurrency, accountResponse.getCurrency());
@@ -35,19 +36,20 @@ public class AccountResponseTest {
 
     @Test
     public void testAccountResponseAccountConstructor() {
+        Long id = 1L;
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";
 
         Account accountSaved = new Account();
-        accountSaved.setId(1L);
+        accountSaved.setId(id);
         accountSaved.setName(accountName);
         accountSaved.setAmount(accountAmount);
         accountSaved.setCurrency(accountCurrency);
 
         AccountResponse accountResponse = new AccountResponse(accountSaved);
 
-        assertEquals(1L, (long) accountResponse.getId());
+        assertEquals(id, accountResponse.getId());
         assertEquals(accountName, accountResponse.getName());
         assertEquals(accountAmount, accountResponse.getAmount());
         assertEquals(accountCurrency, accountResponse.getCurrency());
@@ -55,12 +57,13 @@ public class AccountResponseTest {
 
     @Test
     public void testCreateAccountIncorrectCurrency() {
+        Long id = 1L;
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "BAK";
 
         Account accountSaved = new Account();
-        accountSaved.setId(1L);
+        accountSaved.setId(id);
         accountSaved.setName(accountName);
         accountSaved.setAmount(accountAmount);
         accountSaved.setCurrency(accountCurrency);
