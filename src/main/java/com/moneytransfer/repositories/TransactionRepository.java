@@ -3,15 +3,10 @@ package com.moneytransfer.repositories;
 import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Inject;
-import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
-import com.moneytransfer.exceptions.IllegalTransactionAccountException;
-import com.moneytransfer.exceptions.IllegalTransactionBalanceException;
-import org.javamoney.moneta.Money;
 
-import javax.money.convert.MonetaryConversions;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +19,7 @@ public class TransactionRepository {
         return database.startTransaction();
     }
 
-    public Payables savePayables(Payables payables, Transaction transaction) {
+    public Payables save(Payables payables, Transaction transaction) {
         database
                 .transaction(transaction)
                 .table("payables")
@@ -33,7 +28,7 @@ public class TransactionRepository {
         return payables;
     }
 
-    public Receivables saveReceivables(Receivables receivables, Transaction transaction) {
+    public Receivables save(Receivables receivables, Transaction transaction) {
         database
                 .transaction(transaction)
                 .table("receivables")
@@ -42,7 +37,7 @@ public class TransactionRepository {
         return receivables;
     }
 
-    public Transfers saveTransfers(Transfers transfers, Transaction transaction) {
+    public Transfers save(Transfers transfers, Transaction transaction) {
         database
                 .transaction(transaction)
                 .table("transfers")

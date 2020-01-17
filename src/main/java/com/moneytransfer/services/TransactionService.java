@@ -34,7 +34,7 @@ public class TransactionService {
         try {
             Account account = withdraw(payables, transaction);
             accountRepository.update(account, transaction);
-            payables = transactionRepository.savePayables(payables, transaction);
+            payables = transactionRepository.save(payables, transaction);
             transaction.commit();
         } catch (Throwable t) {
             transaction.rollback();
@@ -49,7 +49,7 @@ public class TransactionService {
         try {
             Account account = deposit(receivables, transaction);
             accountRepository.update(account, transaction);
-            receivables = transactionRepository.saveReceivables(receivables, transaction);
+            receivables = transactionRepository.save(receivables, transaction);
             transaction.commit();
         } catch (Throwable t) {
             transaction.rollback();
@@ -69,11 +69,11 @@ public class TransactionService {
             Account accountTo = deposit(receivables, transaction);
             accountRepository.update(accountFrom, transaction);
             accountRepository.update(accountTo, transaction);
-            payables = transactionRepository.savePayables(payables, transaction);
-            receivables = transactionRepository.saveReceivables(receivables, transaction);
+            payables = transactionRepository.save(payables, transaction);
+            receivables = transactionRepository.save(receivables, transaction);
             transfers.setPayablesId(payables.getId());
             transfers.setReceivablesId(receivables.getId());
-            transfers = transactionRepository.saveTransfers(transfers, transaction);
+            transfers = transactionRepository.save(transfers, transaction);
             transaction.commit();
         } catch (Throwable t) {
             transaction.rollback();
