@@ -14,6 +14,10 @@ public class AccountRepository {
     @Inject
     private Database database;
 
+    public Transaction getTransaction() {
+        return database.startTransaction();
+    }
+
     public Account save(Account account) {
         database
                 .table("account")
@@ -38,11 +42,12 @@ public class AccountRepository {
                 .findFirst();
     }
 
-    public void update(Account account, Transaction transaction) {
+    public Account update(Account account, Transaction transaction) {
         database
                 .transaction(transaction)
                 .table("account")
                 .update(account);
+        return account;
     }
 
     public Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
