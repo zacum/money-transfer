@@ -3,7 +3,7 @@ package com.moneytransfer.repositories;
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.moneytransfer.GuiceConfiguration;
+import com.moneytransfer.GuiceConfigurationAccountTest;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 import org.junit.After;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class AccountRepositoryTest {
 
-    private Injector injector = Guice.createInjector(new GuiceConfiguration());
+    private Injector injector = Guice.createInjector(new GuiceConfigurationAccountTest());
 
     private AccountRepository accountRepository;
 

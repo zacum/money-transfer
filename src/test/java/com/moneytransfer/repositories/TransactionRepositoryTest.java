@@ -3,13 +3,15 @@ package com.moneytransfer.repositories;
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.moneytransfer.GuiceConfiguration;
-import com.moneytransfer.entities.Account;
+import com.moneytransfer.GuiceConfigurationTransactionTest;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
 import org.javamoney.moneta.Money;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
@@ -19,10 +21,9 @@ import java.util.Optional;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class TransactionRepositoryTest {
 
-    private Injector injector = Guice.createInjector(new GuiceConfiguration());
+    private Injector injector = Guice.createInjector(new GuiceConfigurationTransactionTest());
 
     private AccountRepository accountRepository;
 
@@ -45,19 +46,13 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testSavePayables() {
-        Account account = new Account();
-        account.setName("Victor Account");
-        account.setAmount(BigDecimal.valueOf(10.50));
-        account.setCurrency("EUR");
-
-        Account accountSaved = accountRepository.save(account);
-
         Long id = 1L;
+        Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
 
         Payables payables = new Payables();
-        payables.setAccountId(accountSaved.getId());
+        payables.setAccountId(accountId);
         payables.setMoney(Money.of(amount, currency));
 
         Transaction transaction = transactionRepository.getTransaction();
@@ -65,14 +60,13 @@ public class TransactionRepositoryTest {
         transaction.commit();
 
         assertEquals(id, payablesSaved.getId());
-        assertEquals(accountSaved.getId(), payablesSaved.getAccountId());
+        assertEquals(accountId, payablesSaved.getAccountId());
         assertEquals(amount, payablesSaved.getAmount());
         assertEquals(currency, payablesSaved.getCurrency());
     }
 
     @Test
     public void testGetPayablesNonEmpty() {
-        Long id = 1L;
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
@@ -93,7 +87,7 @@ public class TransactionRepositoryTest {
 
         assertEquals(payablesSaved.getId(), payablesListed.getId());
         assertEquals(payablesSaved.getAccountId(), payablesListed.getAccountId());
-        assertEquals(payablesSaved.getAmount(), payablesListed.getAmount());
+        assertEquals(payablesSaved.getAmount().doubleValue(), payablesListed.getAmount().doubleValue(), 0.0);
         assertEquals(payablesSaved.getCurrency(), payablesListed.getCurrency());
     }
 
@@ -127,7 +121,6 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetReceivablesNonEmpty() {
-        Long id = 1L;
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
@@ -148,7 +141,7 @@ public class TransactionRepositoryTest {
 
         assertEquals(receivablesSaved.getId(), receivablesListed.getId());
         assertEquals(receivablesSaved.getAccountId(), receivablesListed.getAccountId());
-        assertEquals(receivablesSaved.getAmount(), receivablesListed.getAmount());
+        assertEquals(receivablesSaved.getAmount().doubleValue(), receivablesListed.getAmount().doubleValue(), 0.0);
         assertEquals(receivablesSaved.getCurrency(), receivablesListed.getCurrency());
     }
 
@@ -162,14 +155,28 @@ public class TransactionRepositoryTest {
     @Test
     public void testSaveTransfers() {
         Long id = 1L;
-        Long payablesId = 2L;
-        Long receivablesId = 3L;
+        Long payablesId = 1L;
+        Long receivablesId = 1L;
+
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
+
+        Payables payables = new Payables();
+        payables.setAccountId(1L);
+        payables.setMoney(Money.of(amount, currency));
+
+        Receivables receivables = new Receivables();
+        receivables.setAccountId(2L);
+        receivables.setMoney(Money.of(amount, currency));
+
+        Transaction transaction = transactionRepository.getTransaction();
+        transactionRepository.save(payables, transaction);
+        transactionRepository.save(receivables, transaction);
 
         Transfers transfers = new Transfers();
         transfers.setPayablesId(payablesId);
         transfers.setReceivablesId(receivablesId);
 
-        Transaction transaction = transactionRepository.getTransaction();
         Transfers transfersSaved = transactionRepository.save(transfers, transaction);
         transaction.commit();
 
@@ -180,15 +187,28 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetTransfersNonEmpty() {
-        Long id = 1L;
-        Long payablesId = 2L;
-        Long receivablesId = 3L;
+        Long payablesId = 1L;
+        Long receivablesId = 1L;
+
+        BigDecimal amount = BigDecimal.valueOf(10.50);
+        String currency = "EUR";
+
+        Payables payables = new Payables();
+        payables.setAccountId(1L);
+        payables.setMoney(Money.of(amount, currency));
+
+        Receivables receivables = new Receivables();
+        receivables.setAccountId(2L);
+        receivables.setMoney(Money.of(amount, currency));
+
+        Transaction transaction = transactionRepository.getTransaction();
+        transactionRepository.save(payables, transaction);
+        transactionRepository.save(receivables, transaction);
 
         Transfers transfers = new Transfers();
         transfers.setPayablesId(payablesId);
         transfers.setReceivablesId(receivablesId);
 
-        Transaction transaction = transactionRepository.getTransaction();
         Transfers transfersSaved = transactionRepository.save(transfers, transaction);
         transaction.commit();
 
@@ -212,7 +232,6 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetExistingPayables() {
-        Long id = 1L;
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
@@ -233,7 +252,7 @@ public class TransactionRepositoryTest {
 
         assertEquals(payablesSaved.getId(), payablesListed.getId());
         assertEquals(payablesSaved.getAccountId(), payablesListed.getAccountId());
-        assertEquals(payablesSaved.getAmount(), payablesListed.getAmount());
+        assertEquals(payablesSaved.getAmount().doubleValue(), payablesListed.getAmount().doubleValue());
         assertEquals(payablesSaved.getCurrency(), payablesListed.getCurrency());
     }
 
@@ -246,7 +265,6 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetExistingReceivables() {
-        Long id = 1L;
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
@@ -267,7 +285,7 @@ public class TransactionRepositoryTest {
 
         assertEquals(receivablesSaved.getId(), receivablesListed.getId());
         assertEquals(receivablesSaved.getAccountId(), receivablesListed.getAccountId());
-        assertEquals(receivablesSaved.getAmount(), receivablesListed.getAmount());
+        assertEquals(receivablesSaved.getAmount().doubleValue(), receivablesListed.getAmount().doubleValue(), 0.0);
         assertEquals(receivablesSaved.getCurrency(), receivablesListed.getCurrency());
     }
 
