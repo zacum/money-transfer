@@ -1,8 +1,10 @@
 package com.moneytransfer.repositories;
 
 import com.dieselpoint.norm.Database;
+import com.dieselpoint.norm.Transaction;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Account;
+import com.moneytransfer.exceptions.IllegalTransactionAccountException;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,24 @@ public class AccountRepository {
                 .results(Account.class)
                 .stream()
                 .findFirst();
+    }
+
+    public void update(Account account, Transaction transaction) {
+        database
+                .transaction(transaction)
+                .table("account")
+                .update(account);
+    }
+
+    public Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
+        return database
+                .transaction(transaction)
+                .table("account")
+                .where("id=?", accountId)
+                .results(Account.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
     }
 
 }

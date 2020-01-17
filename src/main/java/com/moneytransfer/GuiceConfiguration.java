@@ -12,6 +12,10 @@ public class GuiceConfiguration extends AbstractModule {
 
     @Override
     protected void configure() {
+        System.setProperty("norm.jdbcUrl", "jdbc:h2:mem:moneytransfer;INIT=runscript from './src/main/resources/schema.sql';database_to_upper=false");
+        System.setProperty("norm.user", "");
+        System.setProperty("norm.password", "");
+
         bind(Gson.class).asEagerSingleton();
         bind(Database.class).asEagerSingleton();
 

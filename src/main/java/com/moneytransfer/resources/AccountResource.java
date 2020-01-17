@@ -39,7 +39,7 @@ public class AccountResource {
                 if (accountOpt.isEmpty()) {
                     response.status(404);
                 }
-                return accountOpt;
+                return accountOpt.get();
             }, gson::toJson);
         });
     }

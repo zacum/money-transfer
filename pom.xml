@@ -89,6 +89,7 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>com/moneytransfer/repositories/**/*</exclude>
                         <exclude>com/moneytransfer/GuiceConfiguration.class</exclude>
                         <exclude>com/moneytransfer/Main.class</exclude>
                     </excludes>

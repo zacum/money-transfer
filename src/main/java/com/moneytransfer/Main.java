@@ -10,10 +10,6 @@ import com.moneytransfer.resources.TransactionResource;
 public class Main {
 
     public static void main(String[] args) {
-        System.setProperty("norm.jdbcUrl", "jdbc:h2:mem:moneytransfer;INIT=runscript from './src/main/resources/schema.sql';database_to_upper=false");
-        System.setProperty("norm.user", "");
-        System.setProperty("norm.password", "");
-
         Injector injector = Guice.createInjector(new GuiceConfiguration());
         injector.getInstance(DefaultResource.class).run();
         injector.getInstance(AccountResource.class).run();
