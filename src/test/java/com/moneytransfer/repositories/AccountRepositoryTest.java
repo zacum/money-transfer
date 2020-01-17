@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import com.moneytransfer.GuiceConfiguration;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.exceptions.IllegalTransactionAccountException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,6 +30,11 @@ public class AccountRepositoryTest {
     @Before
     public void setUp() {
         accountRepository = injector.getInstance(AccountRepository.class);
+    }
+
+    @After
+    public void tearDown() {
+        accountRepository.close();
     }
 
     @Test

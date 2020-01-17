@@ -18,6 +18,10 @@ public class AccountRepository {
         return database.startTransaction();
     }
 
+    public void close() {
+        database.close();
+    }
+
     public Account save(Account account) {
         database
                 .table("account")

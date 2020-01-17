@@ -19,6 +19,10 @@ public class TransactionRepository {
         return database.startTransaction();
     }
 
+    public void close() {
+        database.close();
+    }
+
     public Payables save(Payables payables, Transaction transaction) {
         database
                 .transaction(transaction)
