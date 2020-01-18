@@ -22,9 +22,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public AccountResponse createAccount(AccountCreateRequest accountCreateRequest) {
-        Account account = new Account();
-        account.setName(accountCreateRequest.getName());
-        account.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
+        Account account = new Account(accountCreateRequest);
         return new AccountResponse(accountRepository.save(account));
     }
 

@@ -1,6 +1,7 @@
 package com.moneytransfer.entities;
 
 import com.google.common.base.Objects;
+import com.moneytransfer.models.account.AccountCreateRequest;
 import org.javamoney.moneta.Money;
 
 import javax.persistence.*;
@@ -19,6 +20,14 @@ public class Account {
     private BigDecimal amount;
 
     private String currency;
+
+    public Account() {
+    }
+
+    public Account(AccountCreateRequest accountCreateRequest) {
+        this.name = accountCreateRequest.getName();
+        this.setMoney(Money.of(0, accountCreateRequest.getCurrency()));
+    }
 
     @Id
     public Long getId() {

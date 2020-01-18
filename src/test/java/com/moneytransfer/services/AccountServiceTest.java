@@ -2,6 +2,9 @@ package com.moneytransfer.services;
 
 import com.dieselpoint.norm.Transaction;
 import com.moneytransfer.entities.Account;
+import com.moneytransfer.entities.Payables;
+import com.moneytransfer.entities.Receivables;
+import com.moneytransfer.exceptions.InsufficientAccountBalanceException;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
@@ -13,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.money.UnknownCurrencyException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -72,18 +74,92 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void testCreateAccountIncorrectCurrency() {
+    public void testDepositToAccountSameCurrency() {
+        Long accountId = 1L;
         String accountName = "Victor Account";
-        String accountCurrency = "BAK";
+        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
 
-        AccountCreateRequest accountCreateRequest = new AccountCreateRequest();
-        accountCreateRequest.setName(accountName);
-        accountCreateRequest.setCurrency(accountCurrency);
+        Account account = new Account();
+        account.setId(accountId);
+        account.setName(accountName);
+        account.setAmount(accountAmount);
+        account.setCurrency(accountCurrency);
 
-        exceptionRule.expect(UnknownCurrencyException.class);
-        exceptionRule.expectMessage("Unknown currency code: BAK");
+        Receivables receivables = new Receivables();
+        receivables.setId(1L);
+        receivables.setAccountId(accountId);
+        receivables.setAmount(BigDecimal.valueOf(10.50));
+        receivables.setCurrency(accountCurrency);
 
-        accountService.createAccount(accountCreateRequest);
+        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+
+        Account accountUpdated = accountService.deposit(receivables, new Transaction());
+
+        assertEquals(accountId, accountUpdated.getId());
+        assertEquals(accountName, accountUpdated.getName());
+        assertEquals(BigDecimal.valueOf(21.00), accountUpdated.getAmount());
+        assertEquals(accountCurrency, accountUpdated.getCurrency());
+
+        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+    }
+
+    @Test
+    public void testWithdrawFromAccountSameCurrencySuccessfully() {
+        Long accountId = 1L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(21.00);
+        String accountCurrency = "EUR";
+
+        Account account = new Account();
+        account.setId(accountId);
+        account.setName(accountName);
+        account.setAmount(accountAmount);
+        account.setCurrency(accountCurrency);
+
+        Payables payables = new Payables();
+        payables.setId(1L);
+        payables.setAccountId(accountId);
+        payables.setAmount(BigDecimal.valueOf(10.50));
+        payables.setCurrency(accountCurrency);
+
+        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+
+        Account accountUpdated = accountService.withdraw(payables, new Transaction());
+
+        assertEquals(accountId, accountUpdated.getId());
+        assertEquals(accountName, accountUpdated.getName());
+        assertEquals(BigDecimal.valueOf(10.50), accountUpdated.getAmount());
+        assertEquals(accountCurrency, accountUpdated.getCurrency());
+
+        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+    }
+
+    @Test
+    public void testWithdrawFromAccountSameCurrencyInsufficientFunds() {
+        Long accountId = 1L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(21.00);
+        String accountCurrency = "EUR";
+
+        Account account = new Account();
+        account.setId(accountId);
+        account.setName(accountName);
+        account.setAmount(accountAmount);
+        account.setCurrency(accountCurrency);
+
+        Payables payables = new Payables();
+        payables.setId(1L);
+        payables.setAccountId(accountId);
+        payables.setAmount(BigDecimal.valueOf(21.01));
+        payables.setCurrency(accountCurrency);
+
+        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+
+        exceptionRule.expect(InsufficientAccountBalanceException.class);
+        exceptionRule.expectMessage("Paying account does not have sufficient funds");
+
+        accountService.withdraw(payables, new Transaction());
     }
 
     @Test
