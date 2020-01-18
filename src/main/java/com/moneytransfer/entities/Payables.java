@@ -1,6 +1,7 @@
 package com.moneytransfer.entities;
 
 import com.google.common.base.Objects;
+import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import org.javamoney.moneta.Money;
 
 import javax.persistence.*;
@@ -21,6 +22,16 @@ public class Payables {
 
     private String currency;
 
+    public Payables() {
+    }
+
+    public Payables(PayablesCreateRequest payablesCreateRequest) {
+        Money money = Money.of(payablesCreateRequest.getAmount(), payablesCreateRequest.getCurrency());
+        this.accountId = payablesCreateRequest.getAccountId();
+        this.amount = BigDecimal.valueOf(money.getNumber().doubleValueExact());
+        this.currency = money.getCurrency().getCurrencyCode();
+    }
+
     @Id
     public Long getId() {
         return id;
@@ -37,11 +48,6 @@ public class Payables {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
-    }
-
-    public void setMoney(Money money) {
-        this.amount = BigDecimal.valueOf(money.getNumber().doubleValueExact());
-        this.currency = money.getCurrency().getCurrencyCode();
     }
 
     public BigDecimal getAmount() {

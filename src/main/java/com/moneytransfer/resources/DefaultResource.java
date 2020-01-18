@@ -1,7 +1,7 @@
 package com.moneytransfer.resources;
 
 import com.google.gson.JsonSyntaxException;
-import com.moneytransfer.exceptions.IllegalTransactionException;
+import com.moneytransfer.exceptions.*;
 
 import javax.money.UnknownCurrencyException;
 
@@ -20,7 +20,23 @@ public class DefaultResource {
             response.status(400);
             response.body("Invalid JSON");
         });
-        exception(IllegalTransactionException.class, (exception, request, response) -> {
+        exception(TransactionNegativeAmountException.class, (exception, request, response) -> {
+            response.status(400);
+            response.body(exception.getMessage());
+        });
+        exception(InsufficientAccountBalanceException.class, (exception, request, response) -> {
+            response.status(409);
+            response.body(exception.getMessage());
+        });
+        exception(AccountNotFoundException.class, (exception, request, response) -> {
+            response.status(404);
+            response.body(exception.getMessage());
+        });
+        exception(SameAccountException.class, (exception, request, response) -> {
+            response.status(409);
+            response.body(exception.getMessage());
+        });
+        exception(AccountException.class, (exception, request, response) -> {
             response.status(400);
             response.body(exception.getMessage());
         });

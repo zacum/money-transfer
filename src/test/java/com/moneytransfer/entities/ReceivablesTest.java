@@ -1,11 +1,12 @@
 package com.moneytransfer.entities;
 
-import org.javamoney.moneta.Money;
+import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ReceivablesTest {
 
@@ -29,18 +30,19 @@ public class ReceivablesTest {
     }
 
     @Test
-    public void testReceivablesConstructorWithMoney() {
-        Long id = 1L;
+    public void testReceivablesCreateRequestConstructor() {
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
 
-        Receivables receivables = new Receivables();
-        receivables.setId(id);
-        receivables.setAccountId(accountId);
-        receivables.setMoney(Money.of(amount, currency));
+        ReceivablesCreateRequest receivablesCreateRequest = new ReceivablesCreateRequest();
+        receivablesCreateRequest.setAccountId(accountId);
+        receivablesCreateRequest.setAmount(amount);
+        receivablesCreateRequest.setCurrency(currency);
 
-        assertEquals(id, receivables.getId());
+        Receivables receivables = new Receivables(receivablesCreateRequest);
+
+        assertNull(receivables.getId());
         assertEquals(accountId, receivables.getAccountId());
         assertEquals(amount, receivables.getAmount());
         assertEquals(currency, receivables.getCurrency());

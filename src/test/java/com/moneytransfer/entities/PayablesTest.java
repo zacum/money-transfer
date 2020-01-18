@@ -1,11 +1,12 @@
 package com.moneytransfer.entities;
 
-import org.javamoney.moneta.Money;
+import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class PayablesTest {
 
@@ -29,18 +30,19 @@ public class PayablesTest {
     }
 
     @Test
-    public void testPayablesConstructorWithMoney() {
-        Long id = 1L;
+    public void testPayablesCreateRequestConstructor() {
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
 
-        Payables payables = new Payables();
-        payables.setId(id);
-        payables.setAccountId(accountId);
-        payables.setMoney(Money.of(amount, currency));
+        PayablesCreateRequest payablesCreateRequest = new PayablesCreateRequest();
+        payablesCreateRequest.setAccountId(accountId);
+        payablesCreateRequest.setAmount(amount);
+        payablesCreateRequest.setCurrency(currency);
 
-        assertEquals(id, payables.getId());
+        Payables payables = new Payables(payablesCreateRequest);
+
+        assertNull(payables.getId());
         assertEquals(accountId, payables.getAccountId());
         assertEquals(amount, payables.getAmount());
         assertEquals(currency, payables.getCurrency());

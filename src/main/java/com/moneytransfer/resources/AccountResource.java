@@ -2,7 +2,7 @@ package com.moneytransfer.resources;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
-import com.moneytransfer.exceptions.IllegalTransactionAccountException;
+import com.moneytransfer.exceptions.AccountException;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.services.AccountService;
@@ -48,7 +48,7 @@ public class AccountResource {
         try {
             return Long.valueOf(request.params(":id"));
         } catch (NumberFormatException e) {
-            throw new IllegalTransactionAccountException("Account id is not a number");
+            throw new AccountException("Account id is not a number");
         }
     }
 

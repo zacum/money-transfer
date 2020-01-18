@@ -6,16 +6,12 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
-import com.moneytransfer.exceptions.IllegalTransactionBalanceException;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import com.moneytransfer.models.transaction.TransactionResponse;
 import com.moneytransfer.models.transaction.TransfersCreateRequest;
-import com.moneytransfer.repositories.AccountRepository;
 import com.moneytransfer.repositories.TransactionRepository;
-import org.javamoney.moneta.Money;
 
-import javax.money.convert.MonetaryConversions;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,17 +19,17 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     @Inject
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Inject
     private TransactionRepository transactionRepository;
 
     public TransactionResponse createPayables(PayablesCreateRequest payablesCreateRequest) {
-        Payables payables = getPayables(payablesCreateRequest);
+        Payables payables = new Payables(payablesCreateRequest);
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account account = withdraw(payables, transaction);
-            accountRepository.update(account, transaction);
+            Account account = accountService.withdraw(payables, transaction);
+            accountService.update(account, transaction);
             payables = transactionRepository.save(payables, transaction);
             transaction.commit();
         } catch (Throwable t) {
@@ -44,11 +40,11 @@ public class TransactionService {
     }
 
     public TransactionResponse createReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
-        Receivables receivables = getReceivables(receivablesCreateRequest);
+        Receivables receivables = new Receivables(receivablesCreateRequest);
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account account = deposit(receivables, transaction);
-            accountRepository.update(account, transaction);
+            Account account = accountService.deposit(receivables, transaction);
+            accountService.update(account, transaction);
             receivables = transactionRepository.save(receivables, transaction);
             transaction.commit();
         } catch (Throwable t) {
@@ -59,16 +55,15 @@ public class TransactionService {
     }
 
     public TransactionResponse createTransfers(TransfersCreateRequest transfersCreateRequest) {
-        Payables payables = getPayables(new PayablesCreateRequest(transfersCreateRequest));
-        Receivables receivables = getReceivables(new ReceivablesCreateRequest(transfersCreateRequest));
+        Payables payables = new Payables(new PayablesCreateRequest(transfersCreateRequest));
+        Receivables receivables = new Receivables(new ReceivablesCreateRequest(transfersCreateRequest));
         Transfers transfers = new Transfers();
-
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account accountFrom = withdraw(payables, transaction);
-            Account accountTo = deposit(receivables, transaction);
-            accountRepository.update(accountFrom, transaction);
-            accountRepository.update(accountTo, transaction);
+            Account accountFrom = accountService.withdraw(payables, transaction);
+            Account accountTo = accountService.deposit(receivables, transaction);
+            accountService.update(accountFrom, transaction);
+            accountService.update(accountTo, transaction);
             payables = transactionRepository.save(payables, transaction);
             receivables = transactionRepository.save(receivables, transaction);
             transfers.setPayablesId(payables.getId());
@@ -80,45 +75,6 @@ public class TransactionService {
             throw t;
         }
         return new TransactionResponse(payables, receivables, transfers);
-    }
-
-    private Payables getPayables(PayablesCreateRequest payablesCreateRequest) {
-        Payables payables = new Payables();
-        payables.setAccountId(payablesCreateRequest.getAccountId());
-        payables.setMoney(Money.of(payablesCreateRequest.getAmount(), payablesCreateRequest.getCurrency()));
-        return payables;
-    }
-
-    private Receivables getReceivables(ReceivablesCreateRequest receivablesCreateRequest) {
-        Receivables receivables = new Receivables();
-        receivables.setAccountId(receivablesCreateRequest.getAccountId());
-        receivables.setMoney(Money.of(receivablesCreateRequest.getAmount(), receivablesCreateRequest.getCurrency()));
-        return receivables;
-    }
-
-    private Account deposit(Receivables receivables, Transaction transaction) {
-        Account account = accountRepository.getAccountOrThrowNotFound(receivables.getAccountId(), transaction);
-        Money original = Money.of(account.getAmount(), account.getCurrency());
-        Money modification = Money.of(receivables.getAmount(), receivables.getCurrency());
-        if (!receivables.getCurrency().equals(account.getCurrency())) {
-            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
-        }
-        account.setMoney(original.add(modification));
-        return account;
-    }
-
-    private Account withdraw(Payables payables, Transaction transaction) {
-        Account account = accountRepository.getAccountOrThrowNotFound(payables.getAccountId(), transaction);
-        Money original = Money.of(account.getAmount(), account.getCurrency());
-        Money modification = Money.of(payables.getAmount(), payables.getCurrency());
-        if (!payables.getCurrency().equals(account.getCurrency())) {
-            modification = modification.with(MonetaryConversions.getConversion(account.getCurrency()));
-        }
-        account.setMoney(original.subtract(modification));
-        if (account.getAmount().signum() < 0) {
-            throw new IllegalTransactionBalanceException("Paying account does not have sufficient funds");
-        }
-        return account;
     }
 
     public List<TransactionResponse> getPayables() {

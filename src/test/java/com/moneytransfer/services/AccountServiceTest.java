@@ -1,5 +1,6 @@
 package com.moneytransfer.services;
 
+import com.dieselpoint.norm.Transaction;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,6 +84,31 @@ public class AccountServiceTest {
         exceptionRule.expectMessage("Unknown currency code: BAK");
 
         accountService.createAccount(accountCreateRequest);
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        Long id = 1L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(0.0);
+        String accountCurrency = "EUR";
+
+        Account accountUpdated = new Account();
+        accountUpdated.setId(id);
+        accountUpdated.setName(accountName);
+        accountUpdated.setAmount(accountAmount);
+        accountUpdated.setCurrency(accountCurrency);
+
+        when(accountRepository.update(eq(accountUpdated), any(Transaction.class))).thenReturn(accountUpdated);
+
+        AccountResponse accountResponse = accountService.update(accountUpdated, new Transaction());
+
+        assertEquals(1, (long) accountResponse.getId());
+        assertEquals(accountName, accountResponse.getName());
+        assertEquals(accountAmount, accountResponse.getAmount());
+        assertEquals(accountCurrency, accountResponse.getCurrency());
+
+        verify(accountRepository).update(eq(accountUpdated), any(Transaction.class));
     }
 
     @Test

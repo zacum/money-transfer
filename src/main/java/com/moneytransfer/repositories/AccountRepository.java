@@ -4,7 +4,7 @@ import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Account;
-import com.moneytransfer.exceptions.IllegalTransactionAccountException;
+import com.moneytransfer.exceptions.AccountNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public class AccountRepository {
                 .results(Account.class)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new IllegalTransactionAccountException("Account id is not found"));
+                .orElseThrow(() -> new AccountNotFoundException("Account is not found"));
     }
 
 }

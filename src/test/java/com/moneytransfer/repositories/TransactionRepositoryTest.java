@@ -53,7 +53,8 @@ public class TransactionRepositoryTest {
 
         Payables payables = new Payables();
         payables.setAccountId(accountId);
-        payables.setMoney(Money.of(amount, currency));
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Payables payablesSaved = transactionRepository.save(payables, transaction);
@@ -73,7 +74,8 @@ public class TransactionRepositoryTest {
 
         Payables payables = new Payables();
         payables.setAccountId(accountId);
-        payables.setMoney(Money.of(amount, currency));
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Payables payablesSaved = transactionRepository.save(payables, transaction);
@@ -107,7 +109,8 @@ public class TransactionRepositoryTest {
 
         Receivables receivables = new Receivables();
         receivables.setAccountId(accountId);
-        receivables.setMoney(Money.of(amount, currency));
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Receivables receivablesSaved = transactionRepository.save(receivables, transaction);
@@ -127,7 +130,8 @@ public class TransactionRepositoryTest {
 
         Receivables receivables = new Receivables();
         receivables.setAccountId(accountId);
-        receivables.setMoney(Money.of(amount, currency));
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Receivables receivablesSaved = transactionRepository.save(receivables, transaction);
@@ -163,11 +167,13 @@ public class TransactionRepositoryTest {
 
         Payables payables = new Payables();
         payables.setAccountId(1L);
-        payables.setMoney(Money.of(amount, currency));
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
         Receivables receivables = new Receivables();
         receivables.setAccountId(2L);
-        receivables.setMoney(Money.of(amount, currency));
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         transactionRepository.save(payables, transaction);
@@ -195,11 +201,13 @@ public class TransactionRepositoryTest {
 
         Payables payables = new Payables();
         payables.setAccountId(1L);
-        payables.setMoney(Money.of(amount, currency));
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
         Receivables receivables = new Receivables();
         receivables.setAccountId(2L);
-        receivables.setMoney(Money.of(amount, currency));
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         transactionRepository.save(payables, transaction);
@@ -238,7 +246,8 @@ public class TransactionRepositoryTest {
 
         Payables payables = new Payables();
         payables.setAccountId(accountId);
-        payables.setMoney(Money.of(amount, currency));
+        payables.setAmount(amount);
+        payables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Payables payablesSaved = transactionRepository.save(payables, transaction);
@@ -271,7 +280,8 @@ public class TransactionRepositoryTest {
 
         Receivables receivables = new Receivables();
         receivables.setAccountId(accountId);
-        receivables.setMoney(Money.of(amount, currency));
+        receivables.setAmount(amount);
+        receivables.setCurrency(currency);
 
         Transaction transaction = transactionRepository.getTransaction();
         Receivables receivablesSaved = transactionRepository.save(receivables, transaction);

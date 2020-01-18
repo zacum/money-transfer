@@ -5,7 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.moneytransfer.GuiceConfigurationAccountTest;
 import com.moneytransfer.entities.Account;
-import com.moneytransfer.exceptions.IllegalTransactionAccountException;
+import com.moneytransfer.exceptions.AccountNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -184,8 +184,8 @@ public class AccountRepositoryTest {
             transaction.commit();
         } catch (Throwable t) {
             transaction.rollback();
-            exceptionRule.expect(IllegalTransactionAccountException.class);
-            exceptionRule.expectMessage("Account id is not found");
+            exceptionRule.expect(AccountNotFoundException.class);
+            exceptionRule.expectMessage("Account is not found");
             throw t;
         }
 
