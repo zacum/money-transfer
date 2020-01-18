@@ -16,14 +16,8 @@ public class GuiceConfigurationAccountTest extends AbstractModule {
         System.setProperty("norm.user", "");
         System.setProperty("norm.password", "");
 
-        bind(Gson.class).asEagerSingleton();
         bind(Database.class).asEagerSingleton();
-
-        bind(AccountService.class).asEagerSingleton();
         bind(AccountRepository.class).asEagerSingleton();
-
-        bind(TransactionService.class).asEagerSingleton();
-        bind(TransactionRepository.class).asEagerSingleton();
     }
 
 }
