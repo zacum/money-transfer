@@ -119,52 +119,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void testCreateReceivablesSuccessfully() {
-        Long accountId = 1L;
-        String accountName = "Victor Account";
-        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
-        String accountCurrency = "EUR";
-
-        Long payablesId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(5.50);
-
-        Account account = new Account();
-        account.setId(accountId);
-        account.setName(accountName);
-        account.setAmount(accountAmount);
-        account.setCurrency(accountCurrency);
-
-        Payables payablesSaved = new Payables();
-        payablesSaved.setId(payablesId);
-        payablesSaved.setAccountId(accountId);
-        payablesSaved.setAmount(payablesAmount);
-        payablesSaved.setCurrency(accountCurrency);
-
-        PayablesCreateRequest payablesCreateRequest = new PayablesCreateRequest();
-        payablesCreateRequest.setAccountId(accountId);
-        payablesCreateRequest.setAmount(accountAmount);
-        payablesCreateRequest.setCurrency(accountCurrency);
-
-        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenReturn(account);
-        when(accountService.update(eq(account), any(Transaction.class))).thenReturn(null);
-        when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payablesSaved);
-
-        TransactionResponse transactionResponse = transactionService.createReceivables(payablesCreateRequest);
-
-        assertEquals(payablesId, transactionResponse.getId());
-        assertEquals(accountId, transactionResponse.getFromAccountId());
-        assertNull(transactionResponse.getToAccountId());
-        assertNull(transactionResponse.getPayablesId());
-        assertNull(transactionResponse.getReceivablesId());
-        assertEquals(payablesAmount, transactionResponse.getAmount());
-        assertEquals(accountCurrency, transactionResponse.getCurrency());
-
-        verify(accountService).withdraw(any(Payables.class), any(Transaction.class));
-        verify(accountService).update(eq(account), any(Transaction.class));
-        verify(transactionRepository).save(any(Payables.class), any(Transaction.class));
-    }
-
-    @Test
     public void testCreateReceivablesRollback() {
         Long accountId = 1L;
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
