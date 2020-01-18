@@ -1,6 +1,7 @@
 package com.moneytransfer.services;
 
 import com.dieselpoint.norm.Transaction;
+import com.moneytransfer.MockTransaction;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
@@ -94,7 +95,7 @@ public class AccountServiceTest {
 
         when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
 
-        Account accountUpdated = accountService.deposit(receivables, new Transaction());
+        Account accountUpdated = accountService.deposit(receivables, new MockTransaction());
 
         assertEquals(accountId, accountUpdated.getId());
         assertEquals(accountName, accountUpdated.getName());
@@ -125,11 +126,42 @@ public class AccountServiceTest {
 
         when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
 
-        Account accountUpdated = accountService.withdraw(payables, new Transaction());
+        Account accountUpdated = accountService.withdraw(payables, new MockTransaction());
 
         assertEquals(accountId, accountUpdated.getId());
         assertEquals(accountName, accountUpdated.getName());
         assertEquals(BigDecimal.valueOf(10.50), accountUpdated.getAmount());
+        assertEquals(accountCurrency, accountUpdated.getCurrency());
+
+        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+    }
+
+    @Test
+    public void testWithdrawFromAccountSameCurrencyZeroBalanceSuccessfully() {
+        Long accountId = 1L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(21.00);
+        String accountCurrency = "EUR";
+
+        Account account = new Account();
+        account.setId(accountId);
+        account.setName(accountName);
+        account.setAmount(accountAmount);
+        account.setCurrency(accountCurrency);
+
+        Payables payables = new Payables();
+        payables.setId(1L);
+        payables.setAccountId(accountId);
+        payables.setAmount(BigDecimal.valueOf(21.00));
+        payables.setCurrency(accountCurrency);
+
+        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+
+        Account accountUpdated = accountService.withdraw(payables, new MockTransaction());
+
+        assertEquals(accountId, accountUpdated.getId());
+        assertEquals(accountName, accountUpdated.getName());
+        assertEquals(BigDecimal.valueOf(0.0), accountUpdated.getAmount());
         assertEquals(accountCurrency, accountUpdated.getCurrency());
 
         verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
@@ -159,7 +191,7 @@ public class AccountServiceTest {
         exceptionRule.expect(InsufficientAccountBalanceException.class);
         exceptionRule.expectMessage("Paying account does not have sufficient funds");
 
-        accountService.withdraw(payables, new Transaction());
+        accountService.withdraw(payables, new MockTransaction());
     }
 
     @Test
@@ -177,7 +209,7 @@ public class AccountServiceTest {
 
         when(accountRepository.update(eq(accountUpdated), any(Transaction.class))).thenReturn(accountUpdated);
 
-        AccountResponse accountResponse = accountService.update(accountUpdated, new Transaction());
+        AccountResponse accountResponse = accountService.update(accountUpdated, new MockTransaction());
 
         assertEquals(1, (long) accountResponse.getId());
         assertEquals(accountName, accountResponse.getName());
@@ -188,7 +220,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void testListAccountsSuccessful() {
+    public void testListAccounts() {
         String accountName = "Victor Account";
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";
