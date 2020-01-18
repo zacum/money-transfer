@@ -20,11 +20,11 @@ public class DefaultResource {
             response.status(400);
             response.body("Invalid JSON");
         });
-        exception(TransactionNegativeAmountException.class, (exception, request, response) -> {
+        exception(NegativeAmountTransactionException.class, (exception, request, response) -> {
             response.status(400);
             response.body(exception.getMessage());
         });
-        exception(InsufficientAccountBalanceException.class, (exception, request, response) -> {
+        exception(AccountBalanceException.class, (exception, request, response) -> {
             response.status(409);
             response.body(exception.getMessage());
         });

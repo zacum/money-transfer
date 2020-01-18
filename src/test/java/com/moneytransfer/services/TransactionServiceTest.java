@@ -6,7 +6,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
-import com.moneytransfer.exceptions.InsufficientAccountBalanceException;
+import com.moneytransfer.exceptions.AccountBalanceException;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import com.moneytransfer.models.transaction.TransactionResponse;
@@ -110,9 +110,9 @@ public class TransactionServiceTest {
         payablesCreateRequest.setAmount(accountAmount);
         payablesCreateRequest.setCurrency(accountCurrency);
 
-        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenThrow(new InsufficientAccountBalanceException("Paying account does not have sufficient funds"));
+        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenThrow(new AccountBalanceException("Paying account does not have sufficient funds"));
 
-        exceptionRule.expect(InsufficientAccountBalanceException.class);
+        exceptionRule.expect(AccountBalanceException.class);
         exceptionRule.expectMessage("Paying account does not have sufficient funds");
 
         transactionService.createPayables(payablesCreateRequest);
@@ -149,7 +149,7 @@ public class TransactionServiceTest {
         when(accountService.update(eq(account), any(Transaction.class))).thenReturn(null);
         when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payablesSaved);
 
-        TransactionResponse transactionResponse = transactionService.createPayables(payablesCreateRequest);
+        TransactionResponse transactionResponse = transactionService.createReceivables(payablesCreateRequest);
 
         assertEquals(payablesId, transactionResponse.getId());
         assertEquals(accountId, transactionResponse.getFromAccountId());

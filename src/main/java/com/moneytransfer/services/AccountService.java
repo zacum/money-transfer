@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
-import com.moneytransfer.exceptions.InsufficientAccountBalanceException;
+import com.moneytransfer.exceptions.AccountBalanceException;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
@@ -46,7 +46,7 @@ public class AccountService {
         }
         account.setMoney(original.subtract(modification));
         if (account.getAmount().signum() < 0) {
-            throw new InsufficientAccountBalanceException("Paying account does not have sufficient funds");
+            throw new AccountBalanceException("Paying account does not have sufficient funds");
         }
         return account;
     }

@@ -5,7 +5,7 @@ import com.moneytransfer.MockTransaction;
 import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
-import com.moneytransfer.exceptions.InsufficientAccountBalanceException;
+import com.moneytransfer.exceptions.AccountBalanceException;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
@@ -188,7 +188,7 @@ public class AccountServiceTest {
 
         when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
 
-        exceptionRule.expect(InsufficientAccountBalanceException.class);
+        exceptionRule.expect(AccountBalanceException.class);
         exceptionRule.expectMessage("Paying account does not have sufficient funds");
 
         accountService.withdraw(payables, new MockTransaction());
