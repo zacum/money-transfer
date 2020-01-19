@@ -185,15 +185,6 @@ public class TransactionResourceTest {
     }
 
     @Test
-    public void testReceivablesListNonEmptyEndpoint() {
-        HttpResponse<String> response = Unirest
-                .get("http://localhost:4567/transaction/receivables")
-                .asString();
-
-        assertEquals(200, response.getStatus());
-    }
-
-    @Test
     public void testTransfersListNonEmptyEndpoint() {
         HttpResponse<String> response = Unirest
                 .get("http://localhost:4567/transaction/transfers")
