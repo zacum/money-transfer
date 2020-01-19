@@ -10,6 +10,7 @@ import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import com.moneytransfer.models.transaction.TransactionResponse;
+import com.moneytransfer.models.transaction.TransfersCreateRequest;
 import com.moneytransfer.repositories.TransactionRepository;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,20 +61,20 @@ public class TransactionServiceTest {
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
         String accountCurrency = "EUR";
 
-        Long payablesId = 2L;
-        BigDecimal payablesAmount = BigDecimal.valueOf(5.50);
-
         AccountResponse accountResponse = new AccountResponse();
         accountResponse.setId(accountId);
         accountResponse.setName(accountName);
         accountResponse.setAmount(accountAmount);
         accountResponse.setCurrency(accountCurrency);
 
-        Payables payablesSaved = new Payables();
-        payablesSaved.setId(payablesId);
-        payablesSaved.setAccountId(accountId);
-        payablesSaved.setAmount(payablesAmount);
-        payablesSaved.setCurrency(accountCurrency);
+        Long payablesId = 2L;
+        BigDecimal payablesAmount = BigDecimal.valueOf(5.50);
+
+        Payables payables = new Payables();
+        payables.setId(payablesId);
+        payables.setAccountId(accountId);
+        payables.setAmount(payablesAmount);
+        payables.setCurrency(accountCurrency);
 
         PayablesCreateRequest payablesCreateRequest = new PayablesCreateRequest();
         payablesCreateRequest.setAccountId(accountId);
@@ -81,7 +82,7 @@ public class TransactionServiceTest {
         payablesCreateRequest.setCurrency(accountCurrency);
 
         when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenReturn(accountResponse);
-        when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payablesSaved);
+        when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payables);
 
         TransactionResponse transactionResponse = transactionService.createPayables(payablesCreateRequest);
 
@@ -117,6 +118,50 @@ public class TransactionServiceTest {
     }
 
     @Test
+    public void testCreateReceivablesSuccessfully() {
+        Long accountId = 1L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
+
+        AccountResponse accountResponse = new AccountResponse();
+        accountResponse.setId(accountId);
+        accountResponse.setName(accountName);
+        accountResponse.setAmount(accountAmount);
+        accountResponse.setCurrency(accountCurrency);
+
+        Long receivablesId = 2L;
+        BigDecimal receivablesAmount = BigDecimal.valueOf(5.50);
+
+        Receivables receivables = new Receivables();
+        receivables.setId(receivablesId);
+        receivables.setAccountId(accountId);
+        receivables.setAmount(receivablesAmount);
+        receivables.setCurrency(accountCurrency);
+
+        ReceivablesCreateRequest receivablesCreateRequest = new ReceivablesCreateRequest();
+        receivablesCreateRequest.setAccountId(accountId);
+        receivablesCreateRequest.setAmount(accountAmount);
+        receivablesCreateRequest.setCurrency(accountCurrency);
+
+        when(accountService.deposit(any(Receivables.class), any(Transaction.class))).thenReturn(accountResponse);
+        when(transactionRepository.save(any(Receivables.class), any(Transaction.class))).thenReturn(receivables);
+
+        TransactionResponse transactionResponse = transactionService.createReceivables(receivablesCreateRequest);
+
+        assertEquals(receivablesId, transactionResponse.getId());
+        assertNull(transactionResponse.getFromAccountId());
+        assertEquals(accountId, transactionResponse.getToAccountId());
+        assertNull(transactionResponse.getPayablesId());
+        assertNull(transactionResponse.getReceivablesId());
+        assertEquals(receivablesAmount, transactionResponse.getAmount());
+        assertEquals(accountCurrency, transactionResponse.getCurrency());
+
+        verify(accountService).deposit(any(Receivables.class), any(Transaction.class));
+        verify(transactionRepository).save(any(Receivables.class), any(Transaction.class));
+    }
+
+    @Test
     public void testCreateReceivablesRollback() {
         Long accountId = 1L;
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
@@ -131,6 +176,101 @@ public class TransactionServiceTest {
         exceptionRule.expectMessage("Unknown currency code: BAK");
 
         transactionService.createReceivables(receivablesCreateRequest);
+    }
+
+    @Test
+    public void testCreateTransfersSuccessfully() {
+        Long fromAccountId = 1L;
+        Long toAccountId = 2L;
+        String accountName = "Victor Account";
+        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "EUR";
+
+        AccountResponse fromAccountResponse = new AccountResponse();
+        fromAccountResponse.setId(fromAccountId);
+        fromAccountResponse.setName(accountName);
+        fromAccountResponse.setAmount(accountAmount);
+        fromAccountResponse.setCurrency(accountCurrency);
+
+        AccountResponse toAccountResponse = new AccountResponse();
+        toAccountResponse.setId(toAccountId);
+        toAccountResponse.setName(accountName);
+        toAccountResponse.setAmount(accountAmount);
+        toAccountResponse.setCurrency(accountCurrency);
+
+        Long payablesId = 2L;
+        BigDecimal payablesAmount = BigDecimal.valueOf(5.50);
+
+        Payables payables = new Payables();
+        payables.setId(payablesId);
+        payables.setAccountId(fromAccountId);
+        payables.setAmount(payablesAmount);
+        payables.setCurrency(accountCurrency);
+
+        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenReturn(fromAccountResponse);
+        when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payables);
+
+        Long receivablesId = 2L;
+        BigDecimal receivablesAmount = BigDecimal.valueOf(5.50);
+
+        Receivables receivables = new Receivables();
+        receivables.setId(receivablesId);
+        receivables.setAccountId(toAccountId);
+        receivables.setAmount(receivablesAmount);
+        receivables.setCurrency(accountCurrency);
+
+        TransfersCreateRequest transfersCreateRequest = new TransfersCreateRequest();
+        transfersCreateRequest.setFromAccountId(fromAccountId);
+        transfersCreateRequest.setToAccountId(toAccountId);
+        transfersCreateRequest.setAmount(accountAmount);
+        transfersCreateRequest.setCurrency(accountCurrency);
+
+        when(accountService.deposit(any(Receivables.class), any(Transaction.class))).thenReturn(toAccountResponse);
+        when(transactionRepository.save(any(Receivables.class), any(Transaction.class))).thenReturn(receivables);
+
+        Long transfersId = 5L;
+
+        Transfers transfers = new Transfers();
+        transfers.setId(transfersId);
+        transfers.setPayablesId(payablesId);
+        transfers.setReceivablesId(receivablesId);
+
+        when(transactionRepository.save(any(Transfers.class), any(Transaction.class))).thenReturn(transfers);
+
+        TransactionResponse transactionResponse = transactionService.createTransfers(transfersCreateRequest);
+
+        assertEquals(transfersId, transactionResponse.getId());
+        assertEquals(fromAccountId, transactionResponse.getFromAccountId());
+        assertEquals(toAccountId, transactionResponse.getToAccountId());
+        assertEquals(payablesId, transactionResponse.getPayablesId());
+        assertEquals(receivablesId, transactionResponse.getReceivablesId());
+        assertEquals(receivablesAmount, transactionResponse.getAmount());
+        assertEquals(accountCurrency, transactionResponse.getCurrency());
+
+        verify(accountService).withdraw(any(Payables.class), any(Transaction.class));
+        verify(transactionRepository).save(any(Payables.class), any(Transaction.class));
+
+        verify(accountService).deposit(any(Receivables.class), any(Transaction.class));
+        verify(transactionRepository).save(any(Receivables.class), any(Transaction.class));
+    }
+
+    @Test
+    public void testCreateTransfersRollback() {
+        Long fromAccountId = 1L;
+        Long toAccountId = 2L;
+        BigDecimal accountAmount = BigDecimal.valueOf(10.50);
+        String accountCurrency = "BAK";
+
+        TransfersCreateRequest transfersCreateRequest = new TransfersCreateRequest();
+        transfersCreateRequest.setFromAccountId(fromAccountId);
+        transfersCreateRequest.setToAccountId(toAccountId);
+        transfersCreateRequest.setAmount(accountAmount);
+        transfersCreateRequest.setCurrency(accountCurrency);
+
+        exceptionRule.expect(UnknownCurrencyException.class);
+        exceptionRule.expectMessage("Unknown currency code: BAK");
+
+        transactionService.createTransfers(transfersCreateRequest);
     }
 
     @Test
