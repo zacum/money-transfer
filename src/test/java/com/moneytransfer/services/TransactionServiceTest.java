@@ -6,6 +6,7 @@ import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
 import com.moneytransfer.exceptions.AccountBalanceException;
+import com.moneytransfer.exceptions.AccountNotFoundException;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
@@ -21,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.money.UnknownCurrencyException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -165,15 +165,17 @@ public class TransactionServiceTest {
     public void testCreateReceivablesRollback() {
         Long accountId = 1L;
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
-        String accountCurrency = "BAK";
+        String accountCurrency = "EUR";
 
         ReceivablesCreateRequest receivablesCreateRequest = new ReceivablesCreateRequest();
         receivablesCreateRequest.setAccountId(accountId);
         receivablesCreateRequest.setAmount(accountAmount);
         receivablesCreateRequest.setCurrency(accountCurrency);
 
-        exceptionRule.expect(UnknownCurrencyException.class);
-        exceptionRule.expectMessage("Unknown currency code: BAK");
+        when(accountService.deposit(any(Receivables.class), any(Transaction.class))).thenThrow(new AccountNotFoundException("Account is not found"));
+
+        exceptionRule.expect(AccountNotFoundException.class);
+        exceptionRule.expectMessage("Account is not found");
 
         transactionService.createReceivables(receivablesCreateRequest);
     }
@@ -259,7 +261,7 @@ public class TransactionServiceTest {
         Long fromAccountId = 1L;
         Long toAccountId = 2L;
         BigDecimal accountAmount = BigDecimal.valueOf(10.50);
-        String accountCurrency = "BAK";
+        String accountCurrency = "EUR";
 
         TransfersCreateRequest transfersCreateRequest = new TransfersCreateRequest();
         transfersCreateRequest.setFromAccountId(fromAccountId);
@@ -267,8 +269,10 @@ public class TransactionServiceTest {
         transfersCreateRequest.setAmount(accountAmount);
         transfersCreateRequest.setCurrency(accountCurrency);
 
-        exceptionRule.expect(UnknownCurrencyException.class);
-        exceptionRule.expectMessage("Unknown currency code: BAK");
+        when(accountService.deposit(any(Receivables.class), any(Transaction.class))).thenThrow(new AccountNotFoundException("Account is not found"));
+
+        exceptionRule.expect(AccountNotFoundException.class);
+        exceptionRule.expectMessage("Account is not found");
 
         transactionService.createTransfers(transfersCreateRequest);
     }
