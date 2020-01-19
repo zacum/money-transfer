@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "from_account_id": 1,
+  "to_account_id": 2,
+  "payables_id": 2,
+  "receivables_id": 3,
+  "amount": 0.5,
+  "currency": "EUR"
+}

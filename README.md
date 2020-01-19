@@ -6,6 +6,7 @@ The following project is a simple REST API for money transferring between accoun
 * The application is developed without use of heavy frameworks, such as Spring or Hibernate. A micro REST framework **Spark** was selected because of it's simplicity and support for both Java and Kotlin. The **Norm** was selected to reduce the ORM overhead and have a thin layer over JDBC instead.
 * Money modifications happen synchronously for the sake of testing. In production version the communication would become asynchronous given the high rate of transaction operations. The endpoint would product a Kafka message to the topic, which would have a number of consumers for processing the message.
 * All money related operations, including the currency conversion are performed by **moneta**. The currency conversion works only if the **ECB** provider or it's substitute is accessible over the network.
+* Move resource tests to the integration tests stage as a part of CI/CD pipeline using the Robot framework.
 * Endpoints for listing the entities exists for testing purposes only. The production version would include pagination, filtering, etc.
 
 ## Requirements

@@ -21,7 +21,7 @@ public class AccountResourceTest {
     @Test
     public void testAccountCreateEndpoint() throws IOException {
         String requestBody = ResourcesUtils.getString("./src/test/resources/account_create_request.json");
-        String responseBody = ResourcesUtils.getString("./src/test/resources/account_create_response_201.json");
+        String responseBody = ResourcesUtils.getString("./src/test/resources/account_create_response.json");
 
         HttpResponse<String> response = Unirest
                 .post("http://localhost:4567/account")
@@ -30,6 +30,19 @@ public class AccountResourceTest {
 
         assertEquals(201, response.getStatus());
         assertEquals(responseBody, response.getBody());
+    }
+
+    @Test
+    public void testAccountCreateEndpointMalformedJson() throws IOException {
+        String requestBody = ResourcesUtils.getString("./src/test/resources/account_create_request_malformed.json");
+
+        HttpResponse<String> response = Unirest
+                .post("http://localhost:4567/account")
+                .body(requestBody)
+                .asString();
+
+        assertEquals(400, response.getStatus());
+        assertEquals("Invalid JSON", response.getBody());
     }
 
     @Test
@@ -67,7 +80,7 @@ public class AccountResourceTest {
 
     @Test
     public void testAccountGetExistingEndpoint() throws IOException {
-        String responseBody = ResourcesUtils.getString("./src/test/resources/account_create_response_201.json");
+        String responseBody = ResourcesUtils.getString("./src/test/resources/account_create_response.json");
 
         HttpResponse<String> response = Unirest
                 .get("http://localhost:4567/account/1")
