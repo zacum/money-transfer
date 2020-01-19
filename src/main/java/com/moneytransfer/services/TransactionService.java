@@ -2,7 +2,6 @@ package com.moneytransfer.services;
 
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Inject;
-import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
@@ -28,8 +27,7 @@ public class TransactionService {
         Payables payables = new Payables(payablesCreateRequest);
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account account = accountService.withdraw(payables, transaction);
-            accountService.update(account, transaction);
+            accountService.withdraw(payables, transaction);
             payables = transactionRepository.save(payables, transaction);
             transaction.commit();
         } catch (Throwable t) {
@@ -43,8 +41,7 @@ public class TransactionService {
         Receivables receivables = new Receivables(receivablesCreateRequest);
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account account = accountService.deposit(receivables, transaction);
-            accountService.update(account, transaction);
+            accountService.deposit(receivables, transaction);
             receivables = transactionRepository.save(receivables, transaction);
             transaction.commit();
         } catch (Throwable t) {
@@ -60,10 +57,8 @@ public class TransactionService {
         Transfers transfers = new Transfers();
         Transaction transaction = transactionRepository.getTransaction();
         try {
-            Account accountFrom = accountService.withdraw(payables, transaction);
-            Account accountTo = accountService.deposit(receivables, transaction);
-            accountService.update(accountFrom, transaction);
-            accountService.update(accountTo, transaction);
+            accountService.withdraw(payables, transaction);
+            accountService.deposit(receivables, transaction);
             payables = transactionRepository.save(payables, transaction);
             receivables = transactionRepository.save(receivables, transaction);
             transfers.setPayablesId(payables.getId());

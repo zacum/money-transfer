@@ -7,12 +7,9 @@ import com.moneytransfer.GuiceConfigurationTransactionTest;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
-import org.javamoney.moneta.Money;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,9 +25,6 @@ public class TransactionRepositoryTest {
     private AccountRepository accountRepository;
 
     private TransactionRepository transactionRepository;
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() {

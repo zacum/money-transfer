@@ -4,7 +4,6 @@ import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
 import com.google.inject.Inject;
 import com.moneytransfer.entities.Account;
-import com.moneytransfer.exceptions.AccountNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,23 +45,22 @@ public class AccountRepository {
                 .findFirst();
     }
 
-    public Account update(Account account, Transaction transaction) {
-        database
-                .transaction(transaction)
-                .table("account")
-                .update(account);
-        return account;
-    }
-
-    public Account getAccountOrThrowNotFound(Long accountId, Transaction transaction) {
+    public Optional<Account> get(Long accountId, Transaction transaction) {
         return database
                 .transaction(transaction)
                 .table("account")
                 .where("id=?", accountId)
                 .results(Account.class)
                 .stream()
-                .findFirst()
-                .orElseThrow(() -> new AccountNotFoundException("Account is not found"));
+                .findFirst();
+    }
+
+    public Account update(Account account, Transaction transaction) {
+        database
+                .transaction(transaction)
+                .table("account")
+                .update(account);
+        return account;
     }
 
 }

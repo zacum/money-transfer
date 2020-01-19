@@ -2,11 +2,11 @@ package com.moneytransfer.services;
 
 import com.dieselpoint.norm.Transaction;
 import com.moneytransfer.MockTransaction;
-import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
 import com.moneytransfer.exceptions.AccountBalanceException;
+import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.models.transaction.PayablesCreateRequest;
 import com.moneytransfer.models.transaction.ReceivablesCreateRequest;
 import com.moneytransfer.models.transaction.TransactionResponse;
@@ -63,11 +63,11 @@ public class TransactionServiceTest {
         Long payablesId = 2L;
         BigDecimal payablesAmount = BigDecimal.valueOf(5.50);
 
-        Account account = new Account();
-        account.setId(accountId);
-        account.setName(accountName);
-        account.setAmount(accountAmount);
-        account.setCurrency(accountCurrency);
+        AccountResponse accountResponse = new AccountResponse();
+        accountResponse.setId(accountId);
+        accountResponse.setName(accountName);
+        accountResponse.setAmount(accountAmount);
+        accountResponse.setCurrency(accountCurrency);
 
         Payables payablesSaved = new Payables();
         payablesSaved.setId(payablesId);
@@ -80,8 +80,7 @@ public class TransactionServiceTest {
         payablesCreateRequest.setAmount(accountAmount);
         payablesCreateRequest.setCurrency(accountCurrency);
 
-        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenReturn(account);
-        when(accountService.update(eq(account), any(Transaction.class))).thenReturn(null);
+        when(accountService.withdraw(any(Payables.class), any(Transaction.class))).thenReturn(accountResponse);
         when(transactionRepository.save(any(Payables.class), any(Transaction.class))).thenReturn(payablesSaved);
 
         TransactionResponse transactionResponse = transactionService.createPayables(payablesCreateRequest);
@@ -95,7 +94,6 @@ public class TransactionServiceTest {
         assertEquals(accountCurrency, transactionResponse.getCurrency());
 
         verify(accountService).withdraw(any(Payables.class), any(Transaction.class));
-        verify(accountService).update(eq(account), any(Transaction.class));
         verify(transactionRepository).save(any(Payables.class), any(Transaction.class));
     }
 
@@ -129,10 +127,8 @@ public class TransactionServiceTest {
         receivablesCreateRequest.setAmount(accountAmount);
         receivablesCreateRequest.setCurrency(accountCurrency);
 
-        when(accountService.deposit(any(Receivables.class), any(Transaction.class))).thenThrow(new UnknownCurrencyException("Invalid currency code"));
-
         exceptionRule.expect(UnknownCurrencyException.class);
-        exceptionRule.expectMessage("Invalid currency code");
+        exceptionRule.expectMessage("Unknown currency code: BAK");
 
         transactionService.createReceivables(receivablesCreateRequest);
     }

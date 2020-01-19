@@ -5,27 +5,22 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.moneytransfer.GuiceConfigurationAccountTest;
 import com.moneytransfer.entities.Account;
-import com.moneytransfer.exceptions.AccountNotFoundException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AccountRepositoryTest {
 
     private Injector injector = Guice.createInjector(new GuiceConfigurationAccountTest());
 
     private AccountRepository accountRepository;
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -167,8 +162,12 @@ public class AccountRepositoryTest {
         Account accountSaved = accountRepository.save(account);
 
         Transaction transaction = accountRepository.getTransaction();
-        Account accountListed = accountRepository.getAccountOrThrowNotFound(accountSaved.getId(), transaction);
+        Optional<Account> accountListedOpt = accountRepository.get(accountSaved.getId(), transaction);
         transaction.commit();
+
+        assertTrue(accountListedOpt.isPresent());
+
+        Account accountListed = accountListedOpt.get();
 
         assertEquals(accountSaved.getId(), accountListed.getId());
         assertEquals(accountSaved.getName(), accountListed.getName());
@@ -177,19 +176,12 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    public void testGetNonExistingThrowExceptionAccount() {
+    public void testGetNonExistingTransactionAccount() {
         Transaction transaction = accountRepository.getTransaction();
-        try {
-            accountRepository.getAccountOrThrowNotFound(1L, transaction);
-            transaction.commit();
-        } catch (Throwable t) {
-            transaction.rollback();
-            exceptionRule.expect(AccountNotFoundException.class);
-            exceptionRule.expectMessage("Account is not found");
-            throw t;
-        }
+        Optional<Account> accountListedOpt = accountRepository.get(1L, transaction);
+        transaction.commit();
 
-        fail("Should throw exception");
+        assertTrue(accountListedOpt.isEmpty());
     }
 
 }

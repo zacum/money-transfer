@@ -6,6 +6,7 @@ import com.moneytransfer.entities.Account;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.exceptions.AccountBalanceException;
+import com.moneytransfer.exceptions.AccountNotFoundException;
 import com.moneytransfer.models.account.AccountCreateRequest;
 import com.moneytransfer.models.account.AccountResponse;
 import com.moneytransfer.repositories.AccountRepository;
@@ -93,16 +94,36 @@ public class AccountServiceTest {
         receivables.setAmount(BigDecimal.valueOf(10.50));
         receivables.setCurrency(accountCurrency);
 
-        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.of(account));
+        when(accountRepository.update(eq(account), any(Transaction.class))).thenReturn(account);
 
-        Account accountUpdated = accountService.deposit(receivables, new MockTransaction());
+        AccountResponse accountUpdated = accountService.deposit(receivables, new MockTransaction());
 
         assertEquals(accountId, accountUpdated.getId());
         assertEquals(accountName, accountUpdated.getName());
         assertEquals(BigDecimal.valueOf(21.00), accountUpdated.getAmount());
         assertEquals(accountCurrency, accountUpdated.getCurrency());
 
-        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+        verify(accountRepository).get(eq(accountId), any(Transaction.class));
+    }
+
+    @Test
+    public void testDepositToNonExistingAccount() {
+        Long accountId = 1L;
+        String accountCurrency = "EUR";
+
+        Receivables receivables = new Receivables();
+        receivables.setId(1L);
+        receivables.setAccountId(accountId);
+        receivables.setAmount(BigDecimal.valueOf(10.50));
+        receivables.setCurrency(accountCurrency);
+
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.empty());
+
+        exceptionRule.expect(AccountNotFoundException.class);
+        exceptionRule.expectMessage("Account is not found");
+
+        accountService.deposit(receivables, new MockTransaction());
     }
 
     @Test
@@ -124,16 +145,17 @@ public class AccountServiceTest {
         payables.setAmount(BigDecimal.valueOf(10.50));
         payables.setCurrency(accountCurrency);
 
-        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.of(account));
+        when(accountRepository.update(eq(account), any(Transaction.class))).thenReturn(account);
 
-        Account accountUpdated = accountService.withdraw(payables, new MockTransaction());
+        AccountResponse accountUpdated = accountService.withdraw(payables, new MockTransaction());
 
         assertEquals(accountId, accountUpdated.getId());
         assertEquals(accountName, accountUpdated.getName());
         assertEquals(BigDecimal.valueOf(10.50), accountUpdated.getAmount());
         assertEquals(accountCurrency, accountUpdated.getCurrency());
 
-        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+        verify(accountRepository).get(eq(accountId), any(Transaction.class));
     }
 
     @Test
@@ -155,16 +177,17 @@ public class AccountServiceTest {
         payables.setAmount(BigDecimal.valueOf(21.00));
         payables.setCurrency(accountCurrency);
 
-        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.of(account));
+        when(accountRepository.update(eq(account), any(Transaction.class))).thenReturn(account);
 
-        Account accountUpdated = accountService.withdraw(payables, new MockTransaction());
+        AccountResponse accountUpdated = accountService.withdraw(payables, new MockTransaction());
 
         assertEquals(accountId, accountUpdated.getId());
         assertEquals(accountName, accountUpdated.getName());
         assertEquals(BigDecimal.valueOf(0.0), accountUpdated.getAmount());
         assertEquals(accountCurrency, accountUpdated.getCurrency());
 
-        verify(accountRepository).getAccountOrThrowNotFound(eq(accountId), any(Transaction.class));
+        verify(accountRepository).get(eq(accountId), any(Transaction.class));
     }
 
     @Test
@@ -186,7 +209,7 @@ public class AccountServiceTest {
         payables.setAmount(BigDecimal.valueOf(21.01));
         payables.setCurrency(accountCurrency);
 
-        when(accountRepository.getAccountOrThrowNotFound(eq(accountId), any(Transaction.class))).thenReturn(account);
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.of(account));
 
         exceptionRule.expect(AccountBalanceException.class);
         exceptionRule.expectMessage("Paying account does not have sufficient funds");
@@ -195,28 +218,22 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void testUpdateAccount() {
-        Long id = 1L;
-        String accountName = "Victor Account";
-        BigDecimal accountAmount = BigDecimal.valueOf(0.0);
+    public void testWithdrawFromNonExistingAccount() {
+        Long accountId = 1L;
         String accountCurrency = "EUR";
 
-        Account accountUpdated = new Account();
-        accountUpdated.setId(id);
-        accountUpdated.setName(accountName);
-        accountUpdated.setAmount(accountAmount);
-        accountUpdated.setCurrency(accountCurrency);
+        Payables payables = new Payables();
+        payables.setId(1L);
+        payables.setAccountId(accountId);
+        payables.setAmount(BigDecimal.valueOf(21.01));
+        payables.setCurrency(accountCurrency);
 
-        when(accountRepository.update(eq(accountUpdated), any(Transaction.class))).thenReturn(accountUpdated);
+        when(accountRepository.get(eq(accountId), any(Transaction.class))).thenReturn(Optional.empty());
 
-        AccountResponse accountResponse = accountService.update(accountUpdated, new MockTransaction());
+        exceptionRule.expect(AccountNotFoundException.class);
+        exceptionRule.expectMessage("Account is not found");
 
-        assertEquals(1, (long) accountResponse.getId());
-        assertEquals(accountName, accountResponse.getName());
-        assertEquals(accountAmount, accountResponse.getAmount());
-        assertEquals(accountCurrency, accountResponse.getCurrency());
-
-        verify(accountRepository).update(eq(accountUpdated), any(Transaction.class));
+        accountService.withdraw(payables, new MockTransaction());
     }
 
     @Test
