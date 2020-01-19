@@ -27,6 +27,7 @@ The following project is a simple REST API for money transferring between accoun
 * [SLF4J](http://www.slf4j.org/)
 * [JUnit 4](https://junit.org/junit4/)
 * [Mockito](https://site.mockito.org/)
+* [Unirest](http://unirest.io/)
 
 ## Data Model
 The data model is designed around two entities: **accounts** and **transactions**.
