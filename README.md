@@ -14,6 +14,7 @@ The following project is a simple REST API for money transferring between accoun
 
 * [Java 11](https://www.java.com/en/download/)
 * [Maven 3](https://maven.apache.org/)
+* [JaCoCo](https://www.eclemma.org/jacoco/)
 
 ### Frameworks
 
