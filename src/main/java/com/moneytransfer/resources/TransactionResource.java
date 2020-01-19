@@ -21,12 +21,12 @@ public class TransactionResource {
 
     public void run() {
         path("/transaction", () -> {
-            before("/*", ((request, response) -> response.status(201)));
             post("/payables", (request, response) -> {
                 PayablesCreateRequest payablesCreateRequest = gson.fromJson(request.body(), PayablesCreateRequest.class);
                 if (payablesCreateRequest.getAmount().signum() <= 0) {
                     throw new NegativeAmountTransactionException("Amount needs to be positive");
                 }
+                response.status(201);
                 return transactionService.createPayables(payablesCreateRequest);
             }, gson::toJson);
             post("/receivables", (request, response) -> {
@@ -34,6 +34,7 @@ public class TransactionResource {
                 if (receivablesCreateRequest.getAmount().signum() <= 0) {
                     throw new NegativeAmountTransactionException("Amount needs to be positive");
                 }
+                response.status(201);
                 return transactionService.createReceivables(receivablesCreateRequest);
             }, gson::toJson);
             post("/transfers", (request, response) -> {
@@ -44,6 +45,7 @@ public class TransactionResource {
                 if (transfersCreateRequest.getToAccountId().equals(transfersCreateRequest.getFromAccountId())) {
                     throw new SameAccountException("Cannot transfer money to and from the same account");
                 }
+                response.status(201);
                 return transactionService.createTransfers(transfersCreateRequest);
             }, gson::toJson);
             get("/payables", (request, response) -> {
