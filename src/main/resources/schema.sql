@@ -1,0 +1,39 @@
+DROP TABLE IF EXISTS transfers;
+DROP TABLE IF EXISTS payables;
+DROP TABLE IF EXISTS receivables;
+DROP TABLE IF EXISTS account;
+
+CREATE TABLE account (
+  id BIGINT IDENTITY NOT NULL PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  amount DECIMAL(19, 4) NOT NULL,
+  currency CHAR(3) NOT NULL,
+  row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE payables (
+  id BIGINT IDENTITY NOT NULL PRIMARY KEY,
+  account_id BIGINT NOT NULL,
+  amount DECIMAL(19, 4) NOT NULL,
+  currency CHAR(3) NOT NULL,
+  row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+CREATE TABLE receivables (
+  id BIGINT IDENTITY NOT NULL PRIMARY KEY,
+  account_id BIGINT NOT NULL,
+  amount DECIMAL(19, 4) NOT NULL,
+  currency CHAR(3) NOT NULL,
+  row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+CREATE TABLE transfers (
+  id BIGINT IDENTITY NOT NULL PRIMARY KEY,
+  payables_id BIGINT NOT NULL,
+  receivables_id BIGINT NOT NULL,
+  row_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (payables_id) REFERENCES payables(id),
+  FOREIGN KEY (receivables_id) REFERENCES receivables(id)
+);
