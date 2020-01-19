@@ -38,6 +38,7 @@ public class AccountResource {
                 Optional<AccountResponse> accountOpt = accountService.getAccount(accountId);
                 if (accountOpt.isEmpty()) {
                     response.status(404);
+                    return "";
                 }
                 return accountOpt.get();
             }, gson::toJson);
