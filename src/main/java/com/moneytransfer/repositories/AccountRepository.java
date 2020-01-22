@@ -13,12 +13,12 @@ public class AccountRepository {
     @Inject
     private Database database;
 
-    public void setDatabase(Database database) {
-        this.database = database;
-    }
-
     public Transaction getTransaction() {
         return database.startTransaction();
+    }
+
+    public void close() {
+        database.close();
     }
 
     public Account save(Account account) {
