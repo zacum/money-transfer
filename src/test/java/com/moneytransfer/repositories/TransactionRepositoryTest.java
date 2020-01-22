@@ -1,16 +1,15 @@
 package com.moneytransfer.repositories;
 
+import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.moneytransfer.GuiceConfigurationTransactionTest;
+import com.moneytransfer.DatabaseUtils;
+import com.moneytransfer.ResourcesUtils;
 import com.moneytransfer.entities.Payables;
 import com.moneytransfer.entities.Receivables;
 import com.moneytransfer.entities.Transfers;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -20,22 +19,19 @@ import static org.junit.Assert.assertTrue;
 
 public class TransactionRepositoryTest {
 
-    private Injector injector = Guice.createInjector(new GuiceConfigurationTransactionTest());
+    private static TransactionRepository transactionRepository;
 
-    private AccountRepository accountRepository;
+    static {
+        try {
+            Database database = DatabaseUtils.getDatabase();
+            database.sql(ResourcesUtils.getOriginalString("./src/main/resources/schema.sql")).execute();
+            database.sql(ResourcesUtils.getOriginalString("./src/test/resources/data.sql")).execute();
 
-    private TransactionRepository transactionRepository;
-
-    @Before
-    public void setUp() {
-        accountRepository = injector.getInstance(AccountRepository.class);
-        transactionRepository = injector.getInstance(TransactionRepository.class);
-    }
-
-    @After
-    public void tearDown() {
-        accountRepository.close();
-        transactionRepository.close();
+            transactionRepository = new TransactionRepository();
+            transactionRepository.setDatabase(database);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -77,9 +73,9 @@ public class TransactionRepositoryTest {
 
         List<Payables> payablesList = transactionRepository.getPayables();
 
-        assertEquals(1, payablesList.size());
+        assertEquals(4, payablesList.size());
 
-        Payables payablesListed = payablesList.get(0);
+        Payables payablesListed = payablesList.get(payablesList.size() - 1);
 
         assertEquals(payablesSaved.getId(), payablesListed.getId());
         assertEquals(payablesSaved.getAccountId(), payablesListed.getAccountId());
@@ -88,15 +84,8 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    public void testGetPayablesEmpty() {
-        List<Payables> payables = transactionRepository.getPayables();
-
-        assertTrue(payables.isEmpty());
-    }
-
-    @Test
     public void testSaveReceivables() {
-        Long id = 1L;
+        Long id = 2L;
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
         String currency = "EUR";
@@ -133,9 +122,9 @@ public class TransactionRepositoryTest {
 
         List<Receivables> receivablesList = transactionRepository.getReceivables();
 
-        assertEquals(1, receivablesList.size());
+        assertEquals(4, receivablesList.size());
 
-        Receivables receivablesListed = receivablesList.get(0);
+        Receivables receivablesListed = receivablesList.get(receivablesList.size() - 1);
 
         assertEquals(receivablesSaved.getId(), receivablesListed.getId());
         assertEquals(receivablesSaved.getAccountId(), receivablesListed.getAccountId());
@@ -144,15 +133,8 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    public void testGetReceivablesEmpty() {
-        List<Receivables> receivables = transactionRepository.getReceivables();
-
-        assertTrue(receivables.isEmpty());
-    }
-
-    @Test
     public void testSaveTransfers() {
-        Long id = 1L;
+        Long id = 2L;
         Long payablesId = 1L;
         Long receivablesId = 1L;
 
@@ -226,13 +208,6 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    public void testGetTransfersEmpty() {
-        List<Transfers> transfers = transactionRepository.getTransfers();
-
-        assertTrue(transfers.isEmpty());
-    }
-
-    @Test
     public void testGetExistingPayables() {
         Long accountId = 2L;
         BigDecimal amount = BigDecimal.valueOf(10.50);
@@ -261,7 +236,7 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetNonExistingPayables() {
-        Optional<Payables> payablesOpt = transactionRepository.getPayables(1L);
+        Optional<Payables> payablesOpt = transactionRepository.getPayables(100L);
 
         assertTrue(payablesOpt.isEmpty());
     }
@@ -295,7 +270,7 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testGetNonExistingReceivables() {
-        Optional<Receivables> receivablesOpt = transactionRepository.getReceivables(1L);
+        Optional<Receivables> receivablesOpt = transactionRepository.getReceivables(100L);
 
         assertTrue(receivablesOpt.isEmpty());
     }
