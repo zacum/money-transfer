@@ -15,12 +15,12 @@ public class TransactionRepository {
     @Inject
     private Database database;
 
-    public Transaction getTransaction() {
-        return database.startTransaction();
+    public void setDatabase(Database database) {
+        this.database = database;
     }
 
-    public void close() {
-        database.close();
+    public Transaction getTransaction() {
+        return database.startTransaction();
     }
 
     public Payables save(Payables payables, Transaction transaction) {
