@@ -1,13 +1,14 @@
 package com.moneytransfer.repositories;
 
-import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
-import com.moneytransfer.DatabaseUtils;
-import com.moneytransfer.ResourcesUtils;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.moneytransfer.GuiceConfigurationAccountTest;
 import com.moneytransfer.entities.Account;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -17,18 +18,18 @@ import static org.junit.Assert.assertTrue;
 
 public class AccountRepositoryTest {
 
-    private static AccountRepository accountRepository;
+    private Injector injector = Guice.createInjector(new GuiceConfigurationAccountTest());
 
-    static {
-        try {
-            Database database = DatabaseUtils.getDatabase();
-            database.sql(ResourcesUtils.getOriginalString("./src/main/resources/schema.sql")).execute();
+    private AccountRepository accountRepository;
 
-            accountRepository = new AccountRepository();
-            accountRepository.setDatabase(database);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Before
+    public void setUp() {
+        accountRepository = injector.getInstance(AccountRepository.class);
+    }
+
+    @After
+    public void tearDown() {
+        accountRepository.close();
     }
 
     @Test
@@ -66,14 +67,21 @@ public class AccountRepositoryTest {
 
         List<Account> accounts = accountRepository.getAccounts();
 
-        assertEquals(3, accounts.size());
+        assertEquals(1, accounts.size());
 
-        Account accountListed = accounts.get(accounts.size() - 1);
+        Account accountListed = accounts.get(0);
 
         assertEquals(accountSaved.getId(), accountListed.getId());
         assertEquals(accountSaved.getName(), accountListed.getName());
         assertEquals(accountSaved.getAmount().doubleValue(), accountListed.getAmount().doubleValue(), 0.0);
         assertEquals(accountSaved.getCurrency(), accountListed.getCurrency());
+    }
+
+    @Test
+    public void testGetAccountsEmpty() {
+        List<Account> accounts = accountRepository.getAccounts();
+
+        assertTrue(accounts.isEmpty());
     }
 
     @Test
@@ -103,7 +111,7 @@ public class AccountRepositoryTest {
 
     @Test
     public void testGetNonExistingAccount() {
-        Optional<Account> accountOpt = accountRepository.get(100L);
+        Optional<Account> accountOpt = accountRepository.get(1L);
 
         assertTrue(accountOpt.isEmpty());
     }
@@ -170,7 +178,7 @@ public class AccountRepositoryTest {
     @Test
     public void testGetNonExistingTransactionAccount() {
         Transaction transaction = accountRepository.getTransaction();
-        Optional<Account> accountListedOpt = accountRepository.get(100L, transaction);
+        Optional<Account> accountListedOpt = accountRepository.get(1L, transaction);
         transaction.commit();
 
         assertTrue(accountListedOpt.isEmpty());
